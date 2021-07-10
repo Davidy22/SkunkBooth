@@ -12,7 +12,7 @@ class Filter():
 
     def _apply_detector(self, path: str, grayscale: bool = False,
                         reject_levels: float = 1.3, level_weights: float = 5) -> tuple:
-        """Apply the given detector the the image"""
+        """Apply the given detector to the image"""
         detector = cv2.CascadeClassifier(path)
         print(detector)
         if grayscale:
@@ -25,9 +25,6 @@ class Filter():
 
 class DogEars(Filter):
     """A filter to add dog ears around the given image"""
-
-    def __init__(self, image: np.ndarray):
-        super().__init__(image)
 
     def apply_filter(self, mask: np.ndarray) -> np.ndarray:
         """Apply the given mask over the image at appropriate position"""
