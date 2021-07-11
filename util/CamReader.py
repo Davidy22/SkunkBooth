@@ -38,7 +38,6 @@ def _capture_image_as_ascii() -> None:
         # frame is the coloured image
         #  gray is the grayscaled version
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        print(type(gray))
         # @dha do the operation of converting a np object to asciimate object here
         _print_to_dom_color(gray, 7)
 
@@ -63,8 +62,7 @@ def _print_to_dom_color(gray: np.ndarray, no_of_colors: int) -> None:
     kmeans.fit(flat_gray)
 
     colors = kmeans.cluster_centers_.astype('float')
-    flat_im_dom_color = colors[abs(
-        np.array(flat_gray[None, :], dtype=float) - colors[:, None]).argmin(axis=0)]
+    flat_im_dom_color = colors[abs(np.array(flat_gray[None, :], dtype=float) - colors[:, None]).argmin(axis=0)]
     im_dom_color = np.array(flat_im_dom_color.reshape(
         [gray.shape[0], gray.shape[1]]), dtype='uint8')
     np.where(im_dom_color)
@@ -75,8 +73,7 @@ def _print_to_dom_color(gray: np.ndarray, no_of_colors: int) -> None:
     # asciis = np.array(["%06x" % random.randint(0, 0xFFFFFF) for n in range(no_of_colors)])
     asciis = np.array(
         [random.choice(string.punctuation) for n in range(no_of_colors)])
-    flat_im_dom_color = asciis[abs(
-        np.array(flat_gray[None, :], dtype=float) - colors[:, None]).argmin(axis=0)]
+    flat_im_dom_color = asciis[abs(np.array(flat_gray[None, :], dtype=float) - colors[:, None]).argmin(axis=0)]
     im_dom_color = np.array(flat_im_dom_color.reshape(
         [gray.shape[0], gray.shape[1]]), dtype='str')
     # print(im_dom_color.shape)
