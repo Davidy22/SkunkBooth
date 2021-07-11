@@ -1,6 +1,8 @@
+from time import sleep
 from typing import Tuple
 
 from asciimatics.effects import Print
+from asciimatics.exceptions import StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from PIL import Image
@@ -47,14 +49,33 @@ class ascci:
         effects = [
             Print(screen, img, y=position[1], x=position[0], stop_frame=200),
         ]
-        screen.play([Scene(effects, 500)], stop_on_resize=True)
+        screen.set_scenes([Scene(effects, 500)])
+        try:
+            # TODO: should not be a infite loop.
+            # Might work without loop when we put it in live feed.
+            while True:
+                screen.draw_next_frame()
+                if screen.has_resized():
+                    # screen.force_update()
+                    screen.set_scenes([Scene(effects, 500)])
+                    # screen.close()
+                    # print("Dont resize :)")
+                    # break
+                sleep(0.1)
+        except StopApplication:
+            # Time to stop  - just exit the function.
+            return
+        # screen.play([Scene(effects, 500)], stop_on_resize=True)
         return
 
 
 if __name__ == "__main__":
     a = ascci()
     img = Image.open("src/data/bw.jpg")
-    Screen.wrapper(a.show_image, arguments=(
+    screen = Screen.open()
+    a.show_image(
+        screen,
         img,
-        (0, 0),
-    ), catch_interrupt=True)
+        (screen.width // 2, screen.height // 2),  # figure out how to center it
+    )
+    screen.close()
