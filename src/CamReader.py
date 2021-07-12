@@ -2,25 +2,12 @@ import random
 import string
 import typing
 from os import system
-from time import sleep, time
+from time import sleep
 
 import cv2 as cv
 import numpy as np
 from PIL import Image
 from sklearn.cluster import KMeans
-
-
-def timeit(fn: typing.Function) -> None:
-    """Util to time the functions"""
-    # *args and **kwargs are to support positional and named arguments of fn
-    def get_time(*args, **kwargs) -> None:
-        """Prints time of the function"""
-        start = time()
-        output = fn(*args, **kwargs)
-        print(f"Time taken in {fn.__name__}: {time() - start:.7f}")
-        return output  # make sure that the decorator returns the output of fn
-
-    return get_time
 
 
 class CamReader():
@@ -51,7 +38,6 @@ class CamReader():
         """Coverts image to grayscale"""
         return cv.cvtColor(im, cv.COLOR_BGR2GRAY)
 
-    @timeit
     def capture_image(self, w: int, h: int) -> np.ndarray:
         """If camera is opened then reads the live camera buffer"""
         ret, frame = self.cap.read()
@@ -67,14 +53,12 @@ class CamReader():
         # gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         return frame
 
-    @timeit
     def convert_cv2_to_pil(self, im: np.ndarray) -> Image.Image:
         """Converts numpy image to PIL image"""
         im_copy = cv.cvtColor(im, cv.COLOR_BGR2RGB)
         im_pil = Image.fromarray(im_copy)
         return im_pil
 
-    @timeit
     def print_to_dom_color(self, gray: np.ndarray, no_of_colors: int) -> None:
         """Function for printing photo to the screen in ascii"""
         flat_gray = gray.reshape([gray.shape[0] * gray.shape[1], 1])
