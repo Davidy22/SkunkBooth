@@ -31,7 +31,7 @@ class ascci:
     def __init__(self) -> None:
         pass
 
-    def show_image(self, screen, image: Image, position: Tuple) -> None:
+    def show_image(self, screen: Screen, image: Image, position: Tuple) -> None:
         """Show ascii image in terminal
 
         :param screen: The screen to use when displaying the image.

@@ -9,13 +9,13 @@ class ColourImageFilePIL(StaticRenderer):
     """Reusing internal ColourImageFile for PIL object."""
 
     def __init__(self,
-                 screen,
-                 image,
-                 height=30,
-                 bg=Screen.COLOUR_BLACK,
-                 fill_background=False,
-                 uni=False,
-                 dither=False):
+                 screen: Screen,
+                 image: Image,
+                 height: int = 30,
+                 bg: int = Screen.COLOUR_BLACK,
+                 fill_background: bool = False,
+                 uni: bool = False,
+                 dither: bool = False):
         """The init function
 
         :param screen: The screen to use when displaying the image.
