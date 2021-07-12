@@ -7,6 +7,8 @@ __pycache__/
 venv
 .env
 env
+.direnv
+.envrc
 
 # Unittest reports
 .coverage*
