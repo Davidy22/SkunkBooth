@@ -1,6 +1,5 @@
 import random
 import string
-import typing
 from os import system
 from time import sleep
 
