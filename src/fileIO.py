@@ -10,8 +10,8 @@ class IOBase:
     """ASCII conversion module, subclass for access to convert()"""
 
     def __init__(self):
-        self.colours = load(open("dat/colours.json"))
-        self.font = ImageFont.truetype("dat/Input.ttf", 30)  # TODO: Font config
+        self.colours = load(open("data/colours.json"))
+        self.font = ImageFont.truetype("data/Input.ttf", 30)  # TODO: Font config
         self.fx, self.fy = self.font.getsize(" ")
         self.lookup = {}
         self.charBack = Image.new("RGB", (self.fx, self.fy))
