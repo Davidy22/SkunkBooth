@@ -1,3 +1,4 @@
+import logging
 import sys
 from typing import Any
 
@@ -32,19 +33,26 @@ class MainFrame(Frame):
         controls_layout.add_widget(self._quit_button, 3)
         self.set_theme("monochrome")
         self.fix()
+        """Initializing logging module"""
+        logging.basicConfig(filename="ui.log", filemode="w")
+        logging.info("Mainframe initialized")
 
     def _gallery(self) -> None:
         """Open gallery"""
+        logging.info("Gallery was clicked")
 
     def _shoot(self) -> None:
         """Take an image"""
+        logging.info("Camera was clicked")
 
     def _effects(self) -> None:
         """Open effects"""
+        logging.info("Effects was clicked")
 
     @staticmethod
     def _quit() -> None:
         """Quit application"""
+        logging.info("Application was stopped")
         raise StopApplication("User pressed quit")
 
 
