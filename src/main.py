@@ -7,6 +7,9 @@ from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Frame, Layout
 
+"""Initializing logging module"""
+logging.basicConfig(filename="ui.log", filemode="w", level=logging.DEBUG)
+
 
 class MainFrame(Frame):
     """Recreatable frame to implement main ui"""
@@ -33,8 +36,7 @@ class MainFrame(Frame):
         controls_layout.add_widget(self._quit_button, 3)
         self.set_theme("monochrome")
         self.fix()
-        """Initializing logging module"""
-        logging.basicConfig(filename="ui.log", filemode="w")
+
         logging.info("Mainframe initialized")
 
     def _gallery(self) -> None:
@@ -68,6 +70,7 @@ def ScreenWrapper(screen: Any, scene: Any) -> None:
 if __name__ == "__main__":
     """Main"""
     last_scene = None
+    logging.debug("Write something")
     while True:
         try:
             Screen.wrapper(ScreenWrapper, catch_interrupt=True,
