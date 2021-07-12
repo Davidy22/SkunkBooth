@@ -40,7 +40,7 @@ class ascci:
         """
         img = ColourImageFilePIL(screen,
                                  image,
-                                 screen.height // 2,
+                                 screen.height // 2 + 5,
                                  uni=True,
                                  fill_background=True)
         # ascci = img.get_ascci()
@@ -51,9 +51,7 @@ class ascci:
         ]
         screen.set_scenes([Scene(effects, 500)])
         try:
-            # TODO: should not be a infite loop.
-            # Might work without loop when we put it in live feed.
-            while True:
+            for _ in range(4):
                 screen.draw_next_frame()
                 if screen.has_resized():
                     # screen.force_update()
@@ -61,7 +59,7 @@ class ascci:
                     # screen.close()
                     # print("Dont resize :)")
                     # break
-                sleep(0.1)
+                # sleep(0.1)
         except StopApplication:
             # Time to stop  - just exit the function.
             return
@@ -72,10 +70,13 @@ class ascci:
 if __name__ == "__main__":
     a = ascci()
     img = Image.open("src/data/bw.jpg")
-    screen = Screen.open()
+    screen = Screen.open(unicode_aware=True)
     a.show_image(
         screen,
         img,
-        (screen.width // 2, screen.height // 2),  # figure out how to center it
+        (0, 0),  # figure out how to center it
     )
+    # now we can control how long image stays on screen
+    # using sleep()
+    sleep(5)
     screen.close()
