@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 from typing import Any
 
@@ -7,8 +8,17 @@ from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Frame, Layout
 
+try:
+    os.mkdir(os.path.dirname(os.path.abspath(__file__)) + os.sep + "Logs")
+except FileExistsError:
+    pass
 """Initializing logging module"""
-logging.basicConfig(filename="ui.log", filemode="w", level=logging.DEBUG)
+logging.basicConfig(
+    filename="Logs" + os.sep + "ui.log",
+    filemode="w",
+    level=logging.DEBUG,
+    format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
+)
 
 
 class MainFrame(Frame):
@@ -60,9 +70,7 @@ class MainFrame(Frame):
 
 def ScreenWrapper(screen: Any, scene: Any) -> None:
     """Add scenes to screen and display"""
-    scenes = [
-        Scene([MainFrame(screen)], -1, name="Main")
-    ]
+    scenes = [Scene([MainFrame(screen)], -1, name="Main")]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
 
@@ -70,10 +78,10 @@ def ScreenWrapper(screen: Any, scene: Any) -> None:
 if __name__ == "__main__":
     """Main"""
     last_scene = None
-    logging.debug("Write something")
     while True:
         try:
-            Screen.wrapper(ScreenWrapper, catch_interrupt=True,
+            Screen.wrapper(ScreenWrapper,
+                           catch_interrupt=True,
                            arguments=[last_scene])
             sys.exit(0)
         except ResizeScreenError as e:
