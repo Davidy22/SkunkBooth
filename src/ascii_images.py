@@ -1,3 +1,4 @@
+from re import findall
 from typing import List
 
 from asciimatics.renderers import StaticRenderer, _ImageSequence
@@ -92,4 +93,21 @@ class ColourImageFilePIL(StaticRenderer):
 
     def get_ascci(self) -> List:
         """Get the ascci_image array."""
-        return self._images
+        # Output format -
+        # [
+        #  [(), ()],
+        #  [(), ()],
+        # ]
+        res = []
+        for line in self._images[0].split(
+                "\n"):  # 0 b/c, we are rendering only one image
+            tmp = []  # temp var to store pixels in each line
+            for pxl in line.split("▄"):
+                tmp.append(
+                    map(
+                        int,
+                        tuple(
+                            findall(r"\d{1,3},\d{1,3},\d{1,3}",
+                                    pxl)[0].split(","))))
+            res.append(tmp)
+        return res
