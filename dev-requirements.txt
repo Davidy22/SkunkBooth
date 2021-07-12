@@ -13,7 +13,12 @@ flake8-bandit~=2.1
 flake8-docstrings~=1.5
 flake8-isort~=4.0
 
-#camera util
-scikit-learn==0.24.2
-opencv-python==4.5.2.54
-Pillow==8.3.1
+# Wheel for other packages
+wheel~=0.36.2
+
+# Our libs
+opencv-python~=4.5
+numpy~=1.21
+asciimatics~=1.13
+scikit-learn~=0.24
+Pillow~=8.3
