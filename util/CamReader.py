@@ -3,51 +3,65 @@ from sklearn.cluster import KMeans
 import numpy as np
 import random
 import string
+from PIL import Image
+import matplotlib.pyplot as plt
 
 #  0 -> camera number, if external camera is installed this number needs to be changed
-cap = cv.VideoCapture(0)
 
 # Since a hardware can be only accessible via one user, I/O limitation
-if not cap.isOpened():
-    print("Cannot open camera")
-    exit()
 
-
-def _capture_image_as_ascii():
+def _open_camera():
     """
 
-    :return: reads the camera
+    :return: camera IO object
     """
-    count = 0
-    while True:
-        # Capture frame-by-frame
-        ret, frame = cap.read()
-        # if frame is read correctly ret is True
-        if not ret:
-            print("Can't receive frame (stream end?). Exiting ...")
-            break
+    cap = cv.VideoCapture(0)
+    if not cap.isOpened():
+        print("Cannot open camera")
+    return cap
 
-        # rescaling image to lower dimension
 
-        h = 140
-        w = 120
+def _close_camera(cap):
+    """
+    :return: void : close the camera IO
+    """
+    cap.release()
 
-        frame = cv.resize(frame, [w, h])
-        count = count + 1
-        # Display the resulting frame
-        # frame is the coloured image
-        #  gray is the grayscaled version
-        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
-        # @dha do the operation of converting a np object to asciimate object here
-        _print_to_dom_color(gray, 7)
+def _capture_image(cap, w=120, h=140):
+    """
 
-        # unless pressed: q don;t exit
-        #  we can set the how do we want to exit this loop, currently
-        # exiting after just 10 frames
+    :return: the PIL image of live camera feed
+    """
+    # while True:
+    # Capture frame-by-frame
+    ret, frame = cap.read()
+    # if frame is read correctly ret is True
+    if not ret:
+        print("Can't receive frame (stream end?). Exiting ...")
 
-        if cv.waitKey(1) == ord('q') or count > 10:
-            break
+    # rescaling image to lower dimension
+
+    frame = cv.resize(frame, [w, h])
+    # frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    # Display the resulting frame
+    # frame is the coloured image
+    #  gray is the grayscaled version
+    # gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    return frame
+    # @dha do the operation of converting a np object to asciimate object here
+    # _print_to_dom_color(gray, 7)
+
+
+def _convert_cv2_to_pil(im):
+    """
+
+    :param im: image as a numpy/cv2 array
+    :return: image in PIL format
+    """
+    im_copy = cv.cvtColor(im, cv.COLOR_BGR2RGB)
+    im_pil = Image.fromarray(im_copy)
+    return im_pil
 
 
 def _print_to_dom_color(gray, no_of_colors):
@@ -84,6 +98,14 @@ def _print_to_dom_color(gray, no_of_colors):
 
 # When everything done, release the capture
 if __name__ == '__main__':
-    _capture_image_as_ascii()
-    cap.release()
+    camera = _open_camera()
+    numpyImage = _capture_image(camera, 500, 500)
+
+    pilImage = _convert_cv2_to_pil(numpyImage)
+    # pilImage.show()
+    # plt.plot()
+    # cv.imshow('frame', numpyImage)
+    plt.imshow(pilImage)
+    plt.show()
+    _close_camera(camera)
     cv.destroyAllWindows()
