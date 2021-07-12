@@ -1,3 +1,5 @@
+import logging
+import os
 import sys
 from typing import Any
 
@@ -5,6 +7,10 @@ from asciimatics.exceptions import ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Frame, Layout
+
+from logger import CustomLogger
+
+CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
 
 
 class MainFrame(Frame):
@@ -33,26 +39,30 @@ class MainFrame(Frame):
         self.set_theme("monochrome")
         self.fix()
 
+        logging.info("Mainframe initialized")
+
     def _gallery(self) -> None:
         """Open gallery"""
+        logging.info("Gallery was clicked")
 
     def _shoot(self) -> None:
         """Take an image"""
+        logging.info("Camera was clicked")
 
     def _effects(self) -> None:
         """Open effects"""
+        logging.info("Effects was clicked")
 
     @staticmethod
     def _quit() -> None:
         """Quit application"""
+        logging.info("Application was stopped")
         raise StopApplication("User pressed quit")
 
 
 def ScreenWrapper(screen: Any, scene: Any) -> None:
     """Add scenes to screen and display"""
-    scenes = [
-        Scene([MainFrame(screen)], -1, name="Main")
-    ]
+    scenes = [Scene([MainFrame(screen)], -1, name="Main")]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
 
@@ -62,7 +72,8 @@ if __name__ == "__main__":
     last_scene = None
     while True:
         try:
-            Screen.wrapper(ScreenWrapper, catch_interrupt=True,
+            Screen.wrapper(ScreenWrapper,
+                           catch_interrupt=True,
                            arguments=[last_scene])
             sys.exit(0)
         except ResizeScreenError as e:
