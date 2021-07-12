@@ -8,17 +8,9 @@ from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Frame, Layout
 
-try:
-    os.mkdir(os.path.dirname(os.path.abspath(__file__)) + os.sep + "Logs")
-except FileExistsError:
-    pass
-"""Initializing logging module"""
-logging.basicConfig(
-    filename="Logs" + os.sep + "ui.log",
-    filemode="w",
-    level=logging.DEBUG,
-    format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
-)
+from logger import CustomLogger
+
+CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
 
 
 class MainFrame(Frame):
