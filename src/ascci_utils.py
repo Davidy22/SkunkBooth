@@ -1,28 +1,12 @@
-from time import sleep
 from typing import Tuple
 
 from asciimatics.effects import Print
 from asciimatics.exceptions import StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
+
+from asciimatics_mod import ColourImageFilePIL
 from CamReader import CamReader
-
-from ascii_images import ColourImageFilePIL
-
-# Copying colors here for reference. Delete later
-# COLOUR_BLACK = 0
-# COLOUR_RED = 1
-# COLOUR_GREEN = 2
-# COLOUR_YELLOW = 3
-# COLOUR_BLUE = 4
-# COLOUR_MAGENTA = 5
-# COLOUR_CYAN = 6
-# COLOUR_WHITE = 7
-
-# A_BOLD = 1
-# A_NORMAL = 2
-# A_REVERSE = 3
-# A_UNDERLINE = 4
 
 
 class ascci:
@@ -62,20 +46,21 @@ if __name__ == "__main__":
     # img = Image.open("src/data/bw.jpg")
     screen = Screen.open(unicode_aware=True)
     while True:
-        img = c._convert_cv2_to_pil(c._capture_image(200, 200))
-        image = ColourImageFilePIL(screen,
-                                   img,
-                                   screen.height // 2 + 5,
-                                   uni=True,
-                                   fill_background=True)
-        # screen.force_update(True)
-        a.show_image(
-            screen,
-            image,
-            (0, 0),  # figure out how to center it
-        )
+        try:
+            img = c.convert_cv2_to_pil(c.capture_image(200, 200))
+            image = ColourImageFilePIL(screen,
+                                       img,
+                                       screen.height // 2 + 5,
+                                       uni=True,
+                                       fill_background=True)
+            # screen.force_update(True)
+            a.show_image(
+                screen,
+                image,
+                (0, 0),  # figure out how to center it
+            )
+        except KeyboardInterrupt:
+            c.close_camera()
+            screen.close()
         # sleep(0.1)
-    # we can control how long image stays on screen
-    # using sleep()
-    sleep(5)
     screen.close()

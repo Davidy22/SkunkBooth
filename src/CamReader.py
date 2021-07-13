@@ -1,6 +1,5 @@
 import random
 import string
-from os import system
 from time import sleep
 
 import cv2 as cv
@@ -44,6 +43,8 @@ class CamReader():
         # if frame is read correctly ret is True
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
+            self.close_camera()
+            exit(1)
         # rescaling image to lower dimension
         frame = cv.resize(frame, [w, h])
         # Display the resulting frame
@@ -92,8 +93,7 @@ class CamReader():
                             for row in im_dom_color))
         # print("\n\n\n\n\n\n")
         # Added this for the continous effect, might have to change 0.5 to frame rate later
-        sleep(0.5)  # noqa: S605
-        system("clear")
+        sleep(0.5)
 
 
 if __name__ == '__main__':
