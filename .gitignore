@@ -31,3 +31,6 @@ build/
 .vscode/
 # MacOS
 .DS_Store
+
+# Profiler
+*.prof

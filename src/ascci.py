@@ -5,7 +5,7 @@ from asciimatics.effects import Print
 from asciimatics.exceptions import StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
-from PIL import Image
+from CamReader import CamReader
 
 from ascii_images import ColourImageFilePIL
 
@@ -42,13 +42,13 @@ class ascci:
         effects = [
             Print(screen, image, y=position[1], x=position[0], stop_frame=200),
         ]
-        screen.set_scenes([Scene(effects, 500)])
+        screen.set_scenes([Scene(effects, 0)])
         try:
             for _ in range(4):
                 screen.draw_next_frame()
                 if screen.has_resized():
                     # screen.force_update()
-                    screen.set_scenes([Scene(effects, 500)])
+                    screen.set_scenes([Scene(effects, 100)])
         except StopApplication:
             # Time to stop  - just exit the function.
             return
@@ -58,18 +58,23 @@ class ascci:
 
 if __name__ == "__main__":
     a = ascci()
-    img = Image.open("src/data/bw.jpg")
+    c = CamReader()
+    # img = Image.open("src/data/bw.jpg")
     screen = Screen.open(unicode_aware=True)
-    image = ColourImageFilePIL(screen,
-                               img,
-                               screen.height // 2 + 5,
-                               uni=True,
-                               fill_background=True)
-    a.show_image(
-        screen,
-        image,
-        (0, 0),  # figure out how to center it
-    )
+    while True:
+        img = c._convert_cv2_to_pil(c._capture_image(200, 200))
+        image = ColourImageFilePIL(screen,
+                                   img,
+                                   screen.height // 2 + 5,
+                                   uni=True,
+                                   fill_background=True)
+        # screen.force_update(True)
+        a.show_image(
+            screen,
+            image,
+            (0, 0),  # figure out how to center it
+        )
+        # sleep(0.1)
     # we can control how long image stays on screen
     # using sleep()
     sleep(5)
