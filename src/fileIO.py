@@ -5,13 +5,15 @@ from cv2 import VideoWriter, VideoWriter_fourcc
 from numpy import array
 from PIL import Image, ImageDraw, ImageFont
 
+from data import constants
+
 
 class IOBase:
     """ASCII conversion module, subclass for access to convert()"""
 
     def __init__(self):
         self.font = ImageFont.truetype("data/Input.ttf", 30)  # TODO: Font config
-        self.fx, self.fy = self.font.getsize(" ")
+        self.fx, self.fy = self.font.getsize("g")
         self.glyphs = {}
         self.renderCache = {}
         self.maxCache = 5000
@@ -22,6 +24,11 @@ class IOBase:
             self.colours[i].paste(
                 tuple(cLookup[str(i)]["rgb"].values()), (0, 0, self.fx, self.fy)
             )
+        self.underline = Image.new("RGBA", (self.fx, self.fy))
+        ImageDraw.Draw(self.underline).line(
+            (0, self.fy - self.fy // 11, self.fx, self.fy - self.fy // 11),
+            width=self.fy // 8,
+        )
 
     def convert(self, image: List[List[Tuple[int, int, int]]]) -> array:
         """
@@ -41,24 +48,34 @@ class IOBase:
                 if char not in self.glyphs:
                     # Cache character glyphs
                     glyph = Image.new("RGBA", (self.fx, self.fy))
-                    ImageDraw.Draw(glyph).text(
-                        (x * self.fx, y * self.fy),
-                        char,
-                        (255, 255, 255),
-                        font=self.font,
-                    )
+                    ImageDraw.Draw(glyph).text((0, 0), char, font=self.font)
                     self.glyphs[char] = glyph
 
-                # Render character
-                charD = (image[y][x][2], 0, char)
+                # Render character, (text colour, bg colour, char, attribute)
+                charD = (image[y][x][2], 0, char, image[y][x][1])
                 if charD in self.renderCache:
                     render = self.renderCache[charD]
                 else:
-                    render = self.renderCache[charD] = Image.composite(
-                        self.colours[charD[0]],
-                        self.colours[charD[1]],
-                        self.glyphs[charD[2]],
-                    )
+                    fg = self.colours[charD[0]]
+                    bg = self.colours[charD[1]]
+                    glyph = self.glyphs[charD[2]]
+
+                    # Attributes
+                    if charD[3] in constants.L_BOLD:
+                        if charD[2] + "bold" in self.glyphs:
+                            glyph = self.glyphs[charD[2] + "bold"]
+                        else:
+                            temp = glyph.copy()
+                            temp.paste(glyph, (self.fx // 20, 0), glyph)
+                            temp.paste(glyph, (0, self.fy // 20), glyph)
+                            glyph = self.glyphs[charD[2] + "bold"] = temp
+                    if charD[3] in constants.L_REVERSE:
+                        fg, bg = bg, fg
+                    if charD[3] in constants.L_UNDERLINE:
+                        glyph = glyph.copy()
+                        glyph.paste(self.underline, (0, 0), self.underline)
+                    render = self.renderCache[charD] = Image.composite(fg, bg, glyph)
+
                     if len(self.renderCache) > self.maxCache:
                         self.renderCache.pop(next(iter(self.renderCache)))
 
@@ -97,8 +114,21 @@ class videoIO(IOBase):  # TODO: Other video filetypes
 if __name__ == "__main__":
     import random
 
-    v = videoIO((10, 10))
-    for _ in range(4000):
-        f = [[(102, 2, random.randint(0, 255)) for _ in range(10)] for _ in range(10)]
-        v.write(f)
+    v = videoIO((20, 20))
+    [
+        v.write(
+            [
+                [
+                    (
+                        random.randint(97, 122),
+                        random.randint(1, 8),
+                        (i + (j + 1) * (k + 1)) % 255,
+                    )
+                    for j in range(20)
+                ]
+                for k in range(20)
+            ]
+        )
+        for i in range(400)
+    ]
     v.close()
