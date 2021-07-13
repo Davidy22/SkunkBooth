@@ -86,22 +86,35 @@ class IOBase:
 class videoIO(IOBase):  # TODO: Other video filetypes
     """ASCII to video saver"""
 
-    def __init__(self, dim: Tuple[int, int], dest: str = "out.avi"):
+    def __init__(self, dim: Tuple[int, int] = None, dest: str = "out.avi"):
         """
         Set image dimensions and destination, dimensions must remain constant while recording.
 
-        dim: Character dimensions of the ASCII video.
+        dim: Character dimensions of the ASCII video. Inferred from first frame if missing
         dest: File destination to save to.
         """
         super().__init__()
-        self.dest = VideoWriter(
-            dest, VideoWriter_fourcc(*"DIVX"), 20, (dim[0] * self.fx, dim[1] * self.fy)
-        )
+        if dim is None:
+            self.dest = dest
+        else:
+            self.dest = VideoWriter(
+                dest,
+                VideoWriter_fourcc(*"DIVX"),
+                20,
+                (dim[0] * self.fx, dim[1] * self.fy),
+            )
 
     def write(self, image: List[List[Tuple[int, int, int]]]) -> None:
         """Write a frame to the video."""
         if self.dest is None:
             raise Exception("Attempted write to closed file")
+        elif isinstance(self.dest, str):
+            self.dest = VideoWriter(
+                self.dest,
+                VideoWriter_fourcc(*"DIVX"),
+                20,
+                (len(image[0]) * self.fx, len(image) * self.fy),
+            )
 
         self.dest.write(self.convert(image))
 
@@ -114,7 +127,7 @@ class videoIO(IOBase):  # TODO: Other video filetypes
 if __name__ == "__main__":
     import random
 
-    v = videoIO((20, 20))
+    v = videoIO()
     [
         v.write(
             [
