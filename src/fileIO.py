@@ -10,11 +10,18 @@ class IOBase:
     """ASCII conversion module, subclass for access to convert()"""
 
     def __init__(self):
-        self.colours = load(open("data/colours.json"))
         self.font = ImageFont.truetype("data/Input.ttf", 30)  # TODO: Font config
         self.fx, self.fy = self.font.getsize(" ")
-        self.lookup = {}
-        self.charBack = Image.new("RGB", (self.fx, self.fy))
+        self.glyphs = {}
+        self.renderCache = {}
+        self.maxCache = 5000
+
+        cLookup = load(open("data/colours.json"))
+        self.colours = {i: Image.new("RGB", (self.fx, self.fy)) for i in range(256)}
+        for i in self.colours:
+            self.colours[i].paste(
+                tuple(cLookup[str(i)]["rgb"].values()), (0, 0, self.fx, self.fy)
+            )
 
     def convert(self, image: List[List[Tuple[int, int, int]]]) -> array:
         """
@@ -31,7 +38,7 @@ class IOBase:
                 # TODO: Implement effects parameter
                 # TODO: Implement background color
                 char = chr(image[y][x][0])
-                if char not in self.lookup:
+                if char not in self.glyphs:
                     # Cache character glyphs
                     glyph = Image.new("RGBA", (self.fx, self.fy))
                     ImageDraw.Draw(glyph).text(
@@ -40,25 +47,22 @@ class IOBase:
                         (255, 255, 255),
                         font=self.font,
                     )
-                    glyph = array(glyph)
-                    r, g, b, _ = glyph.T
-                    self.lookup[char] = (
-                        glyph,
-                        ((r == 255) & (g == 255) & (b == 255)).T,
-                    )
-
-                # Recolor character
-                char = self.lookup[char]
-                char[0][..., :-1][char[1]] = tuple(
-                    self.colours[str(image[y][x][2])]["rgb"].values()
-                )
-                char = Image.fromarray(char[0])
+                    self.glyphs[char] = glyph
 
                 # Render character
-                out.paste(
-                    Image.composite(char, self.charBack, char),
-                    (x * self.fx, y * self.fy),
-                )
+                charD = (image[y][x][2], 0, char)
+                if charD in self.renderCache:
+                    render = self.renderCache[charD]
+                else:
+                    render = self.renderCache[charD] = Image.composite(
+                        self.colours[charD[0]],
+                        self.colours[charD[1]],
+                        self.glyphs[charD[2]],
+                    )
+                    if len(self.renderCache) > self.maxCache:
+                        self.renderCache.pop(next(iter(self.renderCache)))
+
+                out.paste(render, (x * self.fx, y * self.fy))
         return array(out)
 
 
@@ -94,7 +98,7 @@ if __name__ == "__main__":
     import random
 
     v = videoIO((10, 10))
-    for _ in range(400):
+    for _ in range(4000):
         f = [[(102, 2, random.randint(0, 255)) for _ in range(10)] for _ in range(10)]
         v.write(f)
     v.close()
