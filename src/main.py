@@ -1,4 +1,3 @@
-import logging
 import os
 import sys
 from typing import Any
@@ -10,7 +9,7 @@ from asciimatics.widgets import Button, Frame, Layout
 
 from logger import CustomLogger
 
-CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
+logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
 
 
 class MainFrame(Frame):
@@ -39,24 +38,24 @@ class MainFrame(Frame):
         self.set_theme("monochrome")
         self.fix()
 
-        logging.info("Mainframe initialized")
+        logger._log_info("Mainframe initialized")
 
     def _gallery(self) -> None:
         """Open gallery"""
-        logging.info("Gallery was clicked")
+        logger._log_info("Gallery was clicked")
 
     def _shoot(self) -> None:
         """Take an image"""
-        logging.info("Camera was clicked")
+        logger._log_info("Camera was clicked")
 
     def _effects(self) -> None:
         """Open effects"""
-        logging.info("Effects was clicked")
+        logger._log_info("Effects was clicked")
 
     @staticmethod
     def _quit() -> None:
         """Quit application"""
-        logging.info("Application was stopped")
+        logger._log_info("Application was stopped")
         raise StopApplication("User pressed quit")
 
 
