@@ -1,6 +1,7 @@
 from typing import List, Tuple
 
-from cv2 import VideoWriter, VideoWriter_fourcc
+import numpy as np
+from cv2 import VideoWriter, VideoWriter_fourcc, imwrite
 from numpy import array
 from PIL import Image, ImageDraw, ImageFont
 
@@ -11,13 +12,17 @@ class IOBase:
     """ASCII conversion module, subclass for access to convert()"""
 
     def __init__(self):
-        self.font = ImageFont.truetype("data/Input.ttf", 30)  # TODO: Font config
+        self.font = ImageFont.truetype("data/Input.ttf",
+                                       30)  # TODO: Font config
         self.fx, self.fy = self.font.getsize("g")
         self.glyphs = {}
         self.renderCache = {}
         self.maxCache = 5000
 
-        self.colours = {i: Image.new("RGB", (self.fx, self.fy)) for i in range(256)}
+        self.colours = {
+            i: Image.new("RGB", (self.fx, self.fy))
+            for i in range(256)
+        }
         for i in self.colours:
             self.colours[i].paste(
                 tuple(reversed(constants.palette[i * 3:i * 3 + 3])),
@@ -44,7 +49,8 @@ class IOBase:
                 # Just draw background if character is empty
                 pixel = image[y][x]
                 if len(pixel) == 1:
-                    out.paste(self.colours[pixel[0]], (x * self.fx, y * self.fy))
+                    out.paste(self.colours[pixel[0]],
+                              (x * self.fx, y * self.fy))
                     continue
 
                 char = pixel[0]
@@ -77,7 +83,8 @@ class IOBase:
                     if attr in constants.L_UNDERLINE:
                         glyph = glyph.copy()
                         glyph.paste(self.underline, (0, 0), self.underline)
-                    render = self.renderCache[pixel] = Image.composite(fg, bg, glyph)
+                    render = self.renderCache[pixel] = Image.composite(
+                        fg, bg, glyph)
 
                     if len(self.renderCache) > self.maxCache:
                         self.renderCache.pop(next(iter(self.renderCache)))
@@ -89,9 +96,10 @@ class IOBase:
 class VideoIO(IOBase):  # TODO: Other video filetypes
     """ASCII to video saver"""
 
-    def __init__(
-        self, dim: Tuple[int, int] = None, fps: int = 60, dest: str = "out.avi"
-    ):
+    def __init__(self,
+                 dim: Tuple[int, int] = None,
+                 fps: int = 60,
+                 dest: str = "out.avi"):
         """
         Set image dimensions and destination, dimensions must remain constant while recording.
 
@@ -130,25 +138,37 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
         self.dest = None
 
 
+class ImageIO(IOBase):
+    """ASCII to image saver"""
+
+    def __init__(self, dest: str = "SaveImage.jpg"):
+        self.dest = dest
+        super().__init__()
+
+    def write_to_file(self, image: List[List[Tuple[int, int, int]]]) -> bool:
+        """For writing image to file"""
+        img = np.array(image)
+        return imwrite(self.dest, img)
+
+
 if __name__ == "__main__":
     import random
 
     v = VideoIO()
     [
-        v.write(
-            [
-                [
-                    (
-                        chr(random.randint(97, 122)),
-                        random.randint(1, 8),
-                        (i + (j + 1) * (k + 1)) % 255,
-                        random.randint(250, 255),
-                    )
-                    for j in range(20)
-                ]
-                for k in range(20)
-            ]
-        )
-        for i in range(400)
+        v.write([[(
+            chr(random.randint(97, 122)),
+            random.randint(1, 8),
+            (i + (j + 1) * (k + 1)) % 255,
+            random.randint(250, 255),
+        ) for j in range(20)] for k in range(20)]) for i in range(400)
     ]
     v.close()
+
+    image = [[(
+        random.randint(1, 8),
+        (0 + (j + 1) * (k + 1)) % 255,
+        random.randint(250, 255),
+    ) for j in range(20)] for k in range(20)]
+    wtr_img = ImageIO()
+    wtr_img.write_to_file(image=image)
