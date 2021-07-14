@@ -1,7 +1,7 @@
 from json import load
 from typing import List, Tuple
 
-from cv2 import VideoWriter, VideoWriter_fourcc
+from cv2 import VideoWriter, VideoWriter_fourcc, imwrite
 from numpy import array
 from PIL import Image, ImageDraw, ImageFont
 
@@ -86,22 +86,35 @@ class IOBase:
 class videoIO(IOBase):  # TODO: Other video filetypes
     """ASCII to video saver"""
 
-    def __init__(self, dim: Tuple[int, int], dest: str = "out.avi"):
+    def __init__(self, dim: Tuple[int, int] = None, dest: str = "out.avi"):
         """
         Set image dimensions and destination, dimensions must remain constant while recording.
 
-        dim: Character dimensions of the ASCII video.
+        dim: Character dimensions of the ASCII video. Inferred from first frame if missing
         dest: File destination to save to.
         """
         super().__init__()
-        self.dest = VideoWriter(
-            dest, VideoWriter_fourcc(*"DIVX"), 20, (dim[0] * self.fx, dim[1] * self.fy)
-        )
+        if dim is None:
+            self.dest = dest
+        else:
+            self.dest = VideoWriter(
+                dest,
+                VideoWriter_fourcc(*"DIVX"),
+                20,
+                (dim[0] * self.fx, dim[1] * self.fy),
+            )
 
     def write(self, image: List[List[Tuple[int, int, int]]]) -> None:
         """Write a frame to the video."""
         if self.dest is None:
             raise Exception("Attempted write to closed file")
+        elif isinstance(self.dest, str):
+            self.dest = VideoWriter(
+                self.dest,
+                VideoWriter_fourcc(*"DIVX"),
+                20,
+                (len(image[0]) * self.fx, len(image) * self.fy),
+            )
 
         self.dest.write(self.convert(image))
 
@@ -111,10 +124,22 @@ class videoIO(IOBase):  # TODO: Other video filetypes
         self.dest = None
 
 
+class ImageIO(IOBase):
+    """ASCII to image saver"""
+
+    def __init__(self, dest: str = "SaveImage.jpg"):
+        self.dest = dest
+        super().__init__()
+
+    def write_to_file(self, image: List[List[Tuple[int, int, int]]]) -> bool:
+        """For writing image to file"""
+        return imwrite(self.dest, self.convert(image))
+
+
 if __name__ == "__main__":
     import random
 
-    v = videoIO((20, 20))
+    v = videoIO()
     [
         v.write(
             [
@@ -132,3 +157,12 @@ if __name__ == "__main__":
         for i in range(400)
     ]
     v.close()
+
+    image = [[(
+        chr(random.randint(97, 122)),
+        random.randint(1, 8),
+        (0 + (j + 1) * (k + 1)) % 255,
+        random.randint(250, 255),
+    ) for j in range(20)] for k in range(20)]
+    wtr_img = ImageIO()
+    wtr_img.write_to_file(image=image)
