@@ -10,14 +10,15 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Button, FileBrowser, Frame, Label, Layout
 
 from logger import CustomLogger
+from webcam import Webcam
 
-logger = CustomLogger(fileoutpath="src/Logs" + os.sep + "ui.log")
+logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
 
 
 class MainFrame(Frame):
     """Recreatable frame to implement main ui"""
 
-    def __init__(self, screen: Any) -> None:
+    def __init__(self, screen: Any, webcam: Webcam) -> None:
         """Initialize frame"""
         super(MainFrame, self).__init__(screen,
                                         screen.height,
