@@ -1,3 +1,4 @@
+import sys
 from typing import List, Tuple
 
 from asciimatics.renderers import DynamicRenderer
@@ -31,7 +32,8 @@ class Webcam(DynamicRenderer):
 
         for y, row in enumerate(self.image):
             for x, i in enumerate(row):
-                self._write(i[0], x, y, i[2], i[1], i[3])
+                if sys.platform == "win32":
+                    self._write(i[0], x, y, i[2] % 8, i[1] % 8, i[3] % 8)
         return self._plain_image, self._colour_map
 
     def close_camera(self) -> None:
