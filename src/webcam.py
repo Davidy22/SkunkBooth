@@ -1,4 +1,4 @@
-import sys
+from sys import platform
 from typing import List, Tuple
 
 from asciimatics.renderers import DynamicRenderer
@@ -33,7 +33,7 @@ class Webcam(DynamicRenderer):
 
         for y, row in enumerate(self.image):
             for x, i in enumerate(row):
-                if sys.platform == "win32":
+                if platform == "win32":
                     self._write(i[0], x, y, palette8[i[2]], i[1], palette8[i[3]])
                 else:
                     self._write(i[0], x, y, i[2], i[1], i[3])

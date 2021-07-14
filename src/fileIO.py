@@ -1,3 +1,4 @@
+from sys import platform
 from typing import List, Tuple
 
 from cv2 import VideoWriter, VideoWriter_fourcc, imwrite
@@ -28,6 +29,10 @@ class IOBase:
             (0, self.fy - self.fy // 11, self.fx, self.fy - self.fy // 11),
             width=self.fy // 8,
         )
+
+    def write(self, image: List[List[Tuple[int, int, int]]]) -> bool:
+        """Template method for write()"""
+        return False
 
     def convert(self, image: List[List[Tuple[int, int, int, int]]]) -> array:
         """
@@ -110,7 +115,7 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
                 (dim[0] * self.fx, dim[1] * self.fy),
             )
 
-    def write(self, image: List[List[Tuple[int, int, int]]]) -> None:
+    def write(self, image: List[List[Tuple[int, int, int]]]) -> bool:
         """Write a frame to the video."""
         if self.dest is None:
             raise Exception("Attempted write to closed file")
@@ -122,7 +127,11 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
                 (len(image[0]) * self.fx, len(image) * self.fy),
             )
 
-        self.dest.write(self.convert(image))
+        try:
+            self.dest.write(self.convert(image))
+            return True
+        except Exception:
+            return False
 
     def close(self) -> None:
         """Close and save the video file."""
@@ -137,9 +146,24 @@ class ImageIO(IOBase):
         self.dest = dest
         super().__init__()
 
-    def write_to_file(self, image: List[List[Tuple[int, int, int]]]) -> bool:
+    def write(self, image: List[List[Tuple[int, int, int]]]) -> bool:
         """For writing image to file"""
         return imwrite(self.dest, self.convert(image))
+
+
+class AsciiIO(IOBase):
+    """ASCII to text saver"""
+
+    def __init__(self, dest: str = "out"):
+        self.dest = dest
+        if platform == "win32":
+            self.dest += ".txt"
+        super().__init__()
+
+    def write(self, image: List[List[Tuple[int, int, int]]]) -> bool:
+        """For writing image to file"""
+        f = open(self.dest, "w")
+        return f.write("\n".join("".join(j[0] for j in i) for i in image))
 
 
 if __name__ == "__main__":
@@ -165,11 +189,19 @@ if __name__ == "__main__":
     ]
     v.close()
 
-    image = [[(
-        chr(random.randint(97, 122)),
-        random.randint(1, 8),
-        (0 + (j + 1) * (k + 1)) % 255,
-        random.randint(250, 255),
-    ) for j in range(20)] for k in range(20)]
+    image = [
+        [
+            (
+                chr(random.randint(97, 122)),
+                random.randint(1, 8),
+                (0 + (j + 1) * (k + 1)) % 255,
+                random.randint(250, 255),
+            )
+            for j in range(20)
+        ]
+        for k in range(20)
+    ]
+    wtr_img = AsciiIO()
+    wtr_img.write(image=image)
     wtr_img = ImageIO()
-    wtr_img.write_to_file(image=image)
+    wtr_img.write(image=image)
