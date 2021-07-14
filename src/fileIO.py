@@ -1,7 +1,7 @@
 from json import load
 from typing import List, Tuple
 
-from cv2 import VideoWriter, VideoWriter_fourcc
+from cv2 import VideoWriter, VideoWriter_fourcc, imwrite
 from numpy import array
 from PIL import Image, ImageDraw, ImageFont
 
@@ -124,6 +124,18 @@ class videoIO(IOBase):  # TODO: Other video filetypes
         self.dest = None
 
 
+class ImageIO(IOBase):
+    """ASCII to image saver"""
+
+    def __init__(self, dest: str = "SaveImage.jpg"):
+        self.dest = dest
+        super().__init__()
+
+    def write_to_file(self, image: List[List[Tuple[int, int, int]]]) -> bool:
+        """For writing image to file"""
+        return imwrite(self.dest, self.convert(image))
+
+
 if __name__ == "__main__":
     import random
 
@@ -145,3 +157,12 @@ if __name__ == "__main__":
         for i in range(400)
     ]
     v.close()
+
+    image = [[(
+        chr(random.randint(97, 122)),
+        random.randint(1, 8),
+        (0 + (j + 1) * (k + 1)) % 255,
+        random.randint(250, 255),
+    ) for j in range(20)] for k in range(20)]
+    wtr_img = ImageIO()
+    wtr_img.write_to_file(image=image)
