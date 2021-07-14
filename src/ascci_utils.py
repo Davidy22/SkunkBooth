@@ -1,7 +1,6 @@
 from asciimatics.effects import Print
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
-from tqdm import tqdm
 
 from asciiGen import Blocks
 from fileIO import VideoIO
@@ -14,7 +13,7 @@ webcam = Webcam(converter, screen.height, screen.width)
 screen.set_scenes([Scene([Print(screen, webcam, y=0, x=0)], 0)])
 
 try:
-    for i in tqdm(range(99999)):
+    while True:
         screen.draw_next_frame()
         if webcam.image is not None:
             vid.write(webcam.image)
