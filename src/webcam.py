@@ -5,6 +5,7 @@ from asciimatics.renderers import DynamicRenderer
 
 from asciiGen import ASCIIGen
 from CamReader import CamReader
+from data.constants import palette8
 
 
 class Webcam(DynamicRenderer):
@@ -33,7 +34,9 @@ class Webcam(DynamicRenderer):
         for y, row in enumerate(self.image):
             for x, i in enumerate(row):
                 if sys.platform == "win32":
-                    self._write(i[0], x, y, i[2] % 8, i[1] % 8, i[3] % 8)
+                    self._write(i[0], x, y, palette8[i[2]], i[1], palette8[i[3]])
+                else:
+                    self._write(i[0], x, y, i[2], i[1], i[3])
         return self._plain_image, self._colour_map
 
     def close_camera(self) -> None:

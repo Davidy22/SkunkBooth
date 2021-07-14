@@ -285,3 +285,9 @@ palette = [
     0xe4, 0xe4, 0xe4,
     0xee, 0xee, 0xee,
 ]
+palette8 = {
+    i: (1 if palette[i * 3] > 127 else 0)
+    + (2 if palette[i * 3 + 1] > 127 else 0)
+    + (4 if palette[i * 3 + 2] > 127 else 0)
+    for i in range(256)
+}
