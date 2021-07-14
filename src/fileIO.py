@@ -1,4 +1,3 @@
-from json import load
 from typing import List, Tuple
 
 from cv2 import VideoWriter, VideoWriter_fourcc, imwrite
@@ -18,11 +17,11 @@ class IOBase:
         self.renderCache = {}
         self.maxCache = 5000
 
-        cLookup = load(open("data/colours.json"))
         self.colours = {i: Image.new("RGB", (self.fx, self.fy)) for i in range(256)}
         for i in self.colours:
             self.colours[i].paste(
-                tuple(cLookup[str(i)]["rgb"].values()), (0, 0, self.fx, self.fy)
+                tuple(reversed(constants.palette[i * 3:i * 3 + 3])),
+                (0, 0, self.fx, self.fy),
             )
         self.underline = Image.new("RGBA", (self.fx, self.fy))
         ImageDraw.Draw(self.underline).line(
@@ -30,7 +29,7 @@ class IOBase:
             width=self.fy // 8,
         )
 
-    def convert(self, image: List[List[Tuple[int, int, int]]]) -> array:
+    def convert(self, image: List[List[Tuple[int, int, int, int]]]) -> array:
         """
         Converts ASCII images to opencv format images to use in opencv writers.
 
@@ -42,9 +41,13 @@ class IOBase:
 
         for y in range(ay):
             for x in range(ax):
-                # TODO: Implement effects parameter
-                # TODO: Implement background color
-                char = chr(image[y][x][0])
+                # Just draw background if character is empty
+                pixel = image[y][x]
+                if len(pixel) == 1:
+                    out.paste(self.colours[pixel[0]], (x * self.fx, y * self.fy))
+                    continue
+
+                char = pixel[0]
                 if char not in self.glyphs:
                     # Cache character glyphs
                     glyph = Image.new("RGBA", (self.fx, self.fy))
@@ -52,29 +55,29 @@ class IOBase:
                     self.glyphs[char] = glyph
 
                 # Render character, (text colour, bg colour, char, attribute)
-                charD = (image[y][x][2], 0, char, image[y][x][1])
-                if charD in self.renderCache:
-                    render = self.renderCache[charD]
+                if pixel in self.renderCache:
+                    render = self.renderCache[pixel]
                 else:
-                    fg = self.colours[charD[0]]
-                    bg = self.colours[charD[1]]
-                    glyph = self.glyphs[charD[2]]
+                    fg = self.colours[pixel[2]]
+                    bg = self.colours[pixel[3]]
+                    glyph = self.glyphs[char]
+                    attr = pixel[1]
 
                     # Attributes
-                    if charD[3] in constants.L_BOLD:
-                        if charD[2] + "bold" in self.glyphs:
-                            glyph = self.glyphs[charD[2] + "bold"]
+                    if attr in constants.L_BOLD:
+                        if char + "bold" in self.glyphs:
+                            glyph = self.glyphs[char + "bold"]
                         else:
                             temp = glyph.copy()
                             temp.paste(glyph, (self.fx // 20, 0), glyph)
                             temp.paste(glyph, (0, self.fy // 20), glyph)
-                            glyph = self.glyphs[charD[2] + "bold"] = temp
-                    if charD[3] in constants.L_REVERSE:
+                            glyph = self.glyphs[char + "bold"] = temp
+                    if attr in constants.L_REVERSE:
                         fg, bg = bg, fg
-                    if charD[3] in constants.L_UNDERLINE:
+                    if attr in constants.L_UNDERLINE:
                         glyph = glyph.copy()
                         glyph.paste(self.underline, (0, 0), self.underline)
-                    render = self.renderCache[charD] = Image.composite(fg, bg, glyph)
+                    render = self.renderCache[pixel] = Image.composite(fg, bg, glyph)
 
                     if len(self.renderCache) > self.maxCache:
                         self.renderCache.pop(next(iter(self.renderCache)))
@@ -83,10 +86,12 @@ class IOBase:
         return array(out)
 
 
-class videoIO(IOBase):  # TODO: Other video filetypes
+class VideoIO(IOBase):  # TODO: Other video filetypes
     """ASCII to video saver"""
 
-    def __init__(self, dim: Tuple[int, int] = None, dest: str = "out.avi"):
+    def __init__(
+        self, dim: Tuple[int, int] = None, fps: int = 60, dest: str = "out.avi"
+    ):
         """
         Set image dimensions and destination, dimensions must remain constant while recording.
 
@@ -96,11 +101,12 @@ class videoIO(IOBase):  # TODO: Other video filetypes
         super().__init__()
         if dim is None:
             self.dest = dest
+            self.fps = fps
         else:
             self.dest = VideoWriter(
                 dest,
                 VideoWriter_fourcc(*"DIVX"),
-                20,
+                fps,
                 (dim[0] * self.fx, dim[1] * self.fy),
             )
 
@@ -112,7 +118,7 @@ class videoIO(IOBase):  # TODO: Other video filetypes
             self.dest = VideoWriter(
                 self.dest,
                 VideoWriter_fourcc(*"DIVX"),
-                20,
+                self.fps,
                 (len(image[0]) * self.fx, len(image) * self.fy),
             )
 
@@ -139,15 +145,16 @@ class ImageIO(IOBase):
 if __name__ == "__main__":
     import random
 
-    v = videoIO()
+    v = VideoIO()
     [
         v.write(
             [
                 [
                     (
-                        random.randint(97, 122),
+                        chr(random.randint(97, 122)),
                         random.randint(1, 8),
                         (i + (j + 1) * (k + 1)) % 255,
+                        random.randint(250, 255),
                     )
                     for j in range(20)
                 ]
