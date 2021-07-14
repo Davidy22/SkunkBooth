@@ -25,16 +25,18 @@ class MainFrame(Frame):
                                         title="Photobooth")
         self._gallery_button = Button("Gallery", self._gallery, add_box=True)
         self._effects_button = Button("Effects", self._effects, add_box=True)
-        self._camera_button = Button(u"📷", self._shoot, add_box=True)
+        self._camera_button = Button(u"📷 Camera", self._shoot, add_box=True)
+        self._video_recording = Button(u"⏯︎  Rec. Start/Stop", self._start_stop_recording, add_box=True)
         self._quit_button = Button("Quit", self._quit, add_box=True)
         camera_layout = Layout([100], fill_frame=True)
         self.add_layout(camera_layout)
-        controls_layout = Layout([1, 1, 1, 1])
+        controls_layout = Layout([1, 1, 1, 1, 1])
         self.add_layout(controls_layout)
         controls_layout.add_widget(self._gallery_button, 0)
         controls_layout.add_widget(self._camera_button, 1)
-        controls_layout.add_widget(self._effects_button, 2)
-        controls_layout.add_widget(self._quit_button, 3)
+        controls_layout.add_widget(self._video_recording, 2)
+        controls_layout.add_widget(self._effects_button, 3)
+        controls_layout.add_widget(self._quit_button, 4)
         self.set_theme("monochrome")
         self.fix()
 
@@ -51,6 +53,10 @@ class MainFrame(Frame):
     def _effects(self) -> None:
         """Open effects"""
         logger._log_info("Effects was clicked")
+
+    def _start_stop_recording(self) -> None:
+        """For the recording functionality"""
+        logger._log_info("Recording started/stopped")
 
     @staticmethod
     def _quit() -> None:
