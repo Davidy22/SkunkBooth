@@ -10,6 +10,8 @@ class ASCIIGen:
 
     def __init__(self, height: int, width: int):
         """
+        Init base generator attributes
+
         :param height: Maximum character height.
         :param width: Maximum character width.
         """
@@ -23,6 +25,7 @@ class ASCIIGen:
 
 class Blocks(ASCIIGen):
     """Render image to ASCII art drawn with colored ▄ or # characters"""
+
     def __init__(
         self,
         height: int,
@@ -33,6 +36,8 @@ class Blocks(ASCIIGen):
         dither: bool = False,
     ):
         """
+        Init params for full block character conversion
+
         :param height: Maximum character height.
         :param width: Maximum character width.
         :param bg: The default background colour for this image.
@@ -40,7 +45,6 @@ class Blocks(ASCIIGen):
         :param uni: Whether to use unicode box characters or not.
         :param dither: Whether to dither the rendered image or not.
         """
-
         super().__init__(height, width)
         self.bg = bg
         self.fill_background = fill_background
