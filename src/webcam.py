@@ -3,6 +3,7 @@ from asciimatics.renderers import DynamicRenderer
 from asciiGen import ASCIIGen
 from CamReader import CamReader
 
+
 class Webcam(DynamicRenderer):
     """Webcam widget for ASCIImatics"""
 
