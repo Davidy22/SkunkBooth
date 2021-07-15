@@ -25,7 +25,7 @@ class IOBase:
             self.font = ImageFont.truetype(fp, size)
         except OSError:
             CustomLogger._log_error(f"Font {fp} not found, falling back.")
-            fp = f'{path.join(path.dirname(path.abspath(__file__)), "data", "Input.ttf")}'
+            fp = f'{path.join(path.dirname(path.abspath(__file__)), "data", "Hack.ttf")}'
             self.font = ImageFont.truetype(fp, size)
 
         px, py = self.fx, self.fy

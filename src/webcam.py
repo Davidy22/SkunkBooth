@@ -7,12 +7,19 @@ from asciiGen import ASCIIGen
 from CamReader import CamReader
 from data.constants import palette8
 from fileIO import ImageIO
+from filterManager import filterManager
 
 
 class Webcam(DynamicRenderer):
     """Webcam widget for ASCIImatics"""
 
-    def __init__(self, asciiGen: ASCIIGen, height: int = 30, width: int = 30):
+    def __init__(
+        self,
+        asciiGen: ASCIIGen,
+        filters: filterManager,
+        height: int = 30,
+        width: int = 30,
+    ):
         """
         The init function
 
@@ -23,6 +30,7 @@ class Webcam(DynamicRenderer):
         super().__init__(height, width)
         self.camera = CamReader()
         self.ascii = asciiGen
+        self.filters = filters
         self.image = None
 
     def resize(self, height: int, width: int) -> None:
@@ -33,13 +41,15 @@ class Webcam(DynamicRenderer):
         """Takes an Image snapshot and saves it"""
         image_to_save = self.image
         img_io = ImageIO()
-        img_io.write_to_file(image_to_save)
+        img_io.write(image_to_save)
 
     def _render_now(self) -> Tuple[List, List]:
         """Extract image from camera, convert to ASCII, print to terminal"""
         image = self.camera.convert_cv2_to_pil(self.camera.capture_image())
+        image = self.filters.pil_filter(image)
 
         self.image = self.ascii.convert(image)
+        self.image = self.filters.ascii_filter(self.image)
 
         for y, row in enumerate(self.image):
             for x, i in enumerate(row):
