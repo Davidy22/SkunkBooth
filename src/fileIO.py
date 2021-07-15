@@ -13,7 +13,7 @@ from logger import CustomLogger
 class IOBase:
     """ASCII conversion module, subclass for access to convert()"""
 
-    def __init__(self, font: str = "Input", fontSize: int = 30):
+    def __init__(self, font: str = "Hack", fontSize: int = 30):
         self.fx, self.fy = 0, 0
         self.setFont(font, fontSize)
         self.maxCache = 5000
