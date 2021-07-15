@@ -111,7 +111,7 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
         self,
         dim: Tuple[int, int] = None,
         fps: int = 60,
-        dest: str = "out.avi",
+        dest: str = "Gallery/out.avi",
         **kwargs,
     ):
         """
@@ -162,7 +162,7 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
 class ImageIO(IOBase):
     """ASCII to image saver"""
 
-    def __init__(self, dest: str = "SaveImage.jpg", **kwargs):
+    def __init__(self, dest: str = "Gallery/SaveImage.jpg", **kwargs):
         super().__init__(**kwargs)
         self.dest = dest
 
