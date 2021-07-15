@@ -33,7 +33,7 @@ class Webcam(DynamicRenderer):
         """Takes an Image snapshot and saves it"""
         image_to_save = self.image
         img_io = ImageIO()
-        img_io.write_to_file(image_to_save)
+        img_io.write(image=image_to_save)
 
     def _render_now(self) -> Tuple[List, List]:
         """Extract image from camera, convert to ASCII, print to terminal"""

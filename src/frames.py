@@ -86,7 +86,7 @@ class GalleryFrame(Frame):
                                            can_scroll=False,
                                            title="Photobooth")
         self._back_camera_button = Button(u"🠔 Back to 📷", self._switch_to_camera, add_box=True)
-        self._browser = FileBrowser(screen.height//2, "src/data")
+        self._browser = FileBrowser(screen.height//2, root="Gallery/")
         title_layout = Layout([1])
         self.add_layout(title_layout)
         files_layout = Layout([100], fill_frame=True)
