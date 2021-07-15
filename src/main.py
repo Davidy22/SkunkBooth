@@ -13,15 +13,21 @@ from webcam import Webcam
 vid = VideoIO()
 screen = Screen.open(unicode_aware=True)
 last_scene = None
-converter = Blocks(
-    int(screen.height), int(screen.width), uni=True, fill_background=True
-)
-webcam = Webcam(converter, int(screen.height / 1.2), int(screen.width / 1.2))
+converter = Blocks(int(screen.height),
+                   int(screen.width),
+                   uni=True,
+                   fill_background=True)
+webcam_scale = 1.2
+webcam_height = int(screen.height / webcam_scale)
+webcam_width = int(screen.width / webcam_scale)
+webcam = Webcam(converter, webcam_height, webcam_width)
 effects = []
 effects.append(MainFrame(screen, webcam))
 effects.append(
-    Print(screen, webcam, y=int(screen.height / 12), x=int(screen.width / 6))
-)
+    Print(screen,
+          webcam,
+          y=screen.height - webcam_height >> 1,
+          x=screen.width - webcam_width >> 1))
 scenes = [
     Scene(effects, -1, name="Main"),
     Scene([GalleryFrame(screen)], -1, name="Gallery"),
@@ -34,12 +40,16 @@ while True:
             screen.close()
             screen = Screen.open(unicode_aware=True)
             effects = []
-            webcam.resize(int(screen.height / 1.2), int(screen.width / 1.2))
+            webcam.resize(webcam_height, webcam_width)
             converter.resize(int(screen.height), int(screen.width))
             effects.append(MainFrame(screen, webcam))
+            webcam_height = int(screen.height / webcam_scale)
+            webcam_width = int(screen.width / webcam_scale)
             effects.append(
-                Print(screen, webcam, y=int(screen.height / 6), x=int(screen.width / 4))
-            )
+                Print(screen,
+                      webcam,
+                      y=screen.height - webcam_height >> 1,
+                      x=screen.width - webcam_width >> 1))
             scenes = [
                 Scene(effects, -1, name="Main"),
                 Scene([GalleryFrame(screen)], -1, name="Gallery"),

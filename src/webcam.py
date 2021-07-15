@@ -29,10 +29,10 @@ class Webcam(DynamicRenderer):
         """Resize output"""
         super().__init__(height, width)
 
-    def take_picture_and_save(self) -> None:
+    def take_picture_and_save(self, img_name: str) -> None:
         """Takes an Image snapshot and saves it"""
         image_to_save = self.image
-        img_io = ImageIO()
+        img_io = ImageIO(dest=img_name)
         img_io.write(image=image_to_save)
 
     def _render_now(self) -> Tuple[List, List]:

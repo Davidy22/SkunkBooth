@@ -1,5 +1,6 @@
 import os
 import sys
+from datetime import datetime
 from typing import Any
 
 from asciimatics.exceptions import (
@@ -26,11 +27,11 @@ class MainFrame(Frame):
                                         hover_focus=True,
                                         can_scroll=False,
                                         title="Photobooth")
-        self._gallery_button = Button("🖼 Gallery", self._gallery, add_box=True)
-        self._effects_button = Button("🖌 Effects", self._effects, add_box=True)
+        self._gallery_button = Button("🖼  Gallery", self._gallery, add_box=True)
+        self._effects_button = Button("🖌  Effects", self._effects, add_box=True)
         self._camera_button = Button(u"📷 Take a picture", self._shoot, add_box=True)
-        self._video_recording = Button(u"⏯︎  Rec. Start/Stop", self._start_stop_recording, add_box=True)
-        self._quit_button = Button("⛌ Quit", self._quit, add_box=True)
+        self._video_recording = Button(u"⏯︎ Rec. Start/Stop", self._start_stop_recording, add_box=True)
+        self._quit_button = Button("🛑 Quit", self._quit, add_box=True)
         camera_layout = Layout([100], fill_frame=True)
         self.add_layout(camera_layout)
         controls_layout = Layout([1, 1, 1, 1, 1])
@@ -64,7 +65,8 @@ class MainFrame(Frame):
     def _shoot(self) -> None:
         """Take an image"""
         logger._log_info("Camera was clicked")
-        self.webcam.take_picture_and_save()
+        img_name = f"gallery/Image-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.jpg"
+        self.webcam.take_picture_and_save(img_name)
         self._screen.refresh()
 
     @staticmethod
@@ -85,8 +87,8 @@ class GalleryFrame(Frame):
                                            hover_focus=True,
                                            can_scroll=False,
                                            title="Photobooth")
-        self._back_camera_button = Button(u"🠔 Back to 📷", self._switch_to_camera, add_box=True)
-        self._browser = FileBrowser(screen.height//2, root="Gallery/")
+        self._back_camera_button = Button(u"👈 Back to 📷", self._switch_to_camera, add_box=True)
+        self._browser = FileBrowser(screen.height//2, root="gallery/")
         title_layout = Layout([1])
         self.add_layout(title_layout)
         files_layout = Layout([100], fill_frame=True)
