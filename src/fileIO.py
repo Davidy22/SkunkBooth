@@ -24,7 +24,7 @@ class IOBase:
         try:
             self.font = ImageFont.truetype(fp, size)
         except OSError:
-            CustomLogger._log_error(None, f"Font {fp} not found, falling back.")
+            CustomLogger._log_error(f"Font {fp} not found, falling back.")
             fp = f'{path.join(path.dirname(path.abspath(__file__)), "data", "Input.ttf")}'
             self.font = ImageFont.truetype(fp, size)
 
@@ -41,10 +41,8 @@ class IOBase:
                     tuple(reversed(constants.palette[i * 3:i * 3 + 3])),
                     (0, 0, self.fx, self.fy),
                 )
-            self.underline = Image.new("RGBA", (self.fx, self.fy))
-            self.underline.paste(
-                (255, 255, 255), (0, self.fy - self.fy // 11, self.fx, self.fy)
-            )
+            self.underline = Image.new("L", (self.fx, self.fy))
+            self.underline.paste(255, (0, self.fy - self.fy // 11, self.fx, self.fy))
 
     def write(self, image: List[List[Tuple[int, int, int]]]) -> bool:
         """Template method for write()"""
@@ -68,8 +66,6 @@ class IOBase:
                     out.paste(self.colours[pixel[0]], (x * self.fx, y * self.fy))
                     continue
 
-                char = pixel[0]
-
                 # Render character, (text colour, bg colour, char, attribute)
                 if pixel in self.renderCache:
                     render = self.renderCache[pixel]
@@ -77,21 +73,23 @@ class IOBase:
                     fg = self.colours[pixel[2]]
                     bg = self.colours[pixel[3]]
                     attr = pixel[1]
+                    char = pixel[0]
 
                     # Attributes
-                    charCode = char + "bd" if attr in constants.L_BOLD else char
-                    if charCode in self.glyphs:
-                        glyph = self.glyphs[charCode]
+                    charID = char + "bd" if attr in constants.L_BOLD else char
+                    if charID in self.glyphs:
+                        glyph = self.glyphs[charID]
                     else:
                         # Cache character glyphs
-                        glyph = Image.new("RGBA", (self.fx, self.fy))
+                        glyph = Image.new("L", (self.fx, self.fy))
                         ImageDraw.Draw(glyph).text(
                             (0, 0),
                             char,
+                            255,
                             font=self.font,
-                            stroke_width=self.bold if charCode[-2:] == "bd" else 0,
+                            stroke_width=self.bold if charID[-2:] == "bd" else 0,
                         )
-                        self.glyphs[charCode] = glyph
+                        self.glyphs[charID] = glyph
                     if attr in constants.L_REVERSE:
                         fg, bg = bg, fg
                     if attr in constants.L_UNDERLINE:
@@ -154,7 +152,10 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
 
     def close(self) -> None:
         """Close and save the video file."""
-        self.dest.release()
+        try:
+            self.dest.release()
+        except Exception:
+            return
         self.dest = None
 
 
@@ -222,5 +223,5 @@ if __name__ == "__main__":
     ]
     wtr_img = AsciiIO()
     wtr_img.write(image=image)
-    wtr_img = ImageIO(font="ComicMono", fontSize=200)
+    wtr_img = ImageIO(font="ComicMono", fontSize=100)
     wtr_img.write(image=image)

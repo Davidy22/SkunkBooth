@@ -21,17 +21,22 @@ class CustomLogger:
             format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
         )
 
-    def _log_debug(self, text: str) -> None:
+    @staticmethod
+    def _log_debug(text: str) -> None:
         logging.debug(text)
 
-    def _log_info(self, text: str) -> None:
+    @staticmethod
+    def _log_info(text: str) -> None:
         logging.info(text)
 
-    def _log_warning(self, text: str) -> None:
+    @staticmethod
+    def _log_warning(text: str) -> None:
         logging.warning(text)
 
-    def _log_error(self, text: str) -> None:
+    @staticmethod
+    def _log_error(text: str) -> None:
         logging.error(text)
 
-    def _log_critical(self, text: str) -> None:
+    @staticmethod
+    def _log_critical(text: str) -> None:
         logging.critical(text)
