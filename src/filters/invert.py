@@ -1,6 +1,6 @@
-from typing import List, Tuple
-from PIL.ImageOps import invert
 from PIL import Image
+from PIL.ImageOps import invert
+
 
 class filter:
     """Sample filter for PIL operations"""
