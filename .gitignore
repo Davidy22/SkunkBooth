@@ -35,5 +35,6 @@ build/
 # Profiler
 *.prof
 
-# Video files
+# Media files
+*.jpg
 *.avi
