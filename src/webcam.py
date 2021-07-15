@@ -27,8 +27,7 @@ class Webcam(DynamicRenderer):
 
     def resize(self, height: int, width: int) -> None:
         """Resize output"""
-        self.height = height
-        self.width = width
+        super().__init__(height, width)
 
     def take_picture_and_save(self) -> None:
         """Takes an Image snapshot and saves it"""
