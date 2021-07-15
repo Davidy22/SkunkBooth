@@ -38,8 +38,8 @@ class CamReader():
 
     def capture_image(self,
                       flip: int = 1,
-                      w: int = cv.CAP_PROP_FRAME_WIDTH,
-                      h: int = cv.CAP_PROP_FRAME_HEIGHT) -> np.ndarray:
+                      w: int = 0,
+                      h: int = 0) -> np.ndarray:
         """If camera is opened then reads the live camera buffer"""
         ret, frame = self.cap.read()
 
@@ -53,7 +53,7 @@ class CamReader():
         frame = cv.flip(frame, flip)
 
         # rescaling image to lower dimension
-        if w != cv.CAP_PROP_FRAME_WIDTH and h != cv.CAP_PROP_FRAME_HEIGHT:
+        if w and h:
             frame = cv.resize(frame, [h, w])
         return frame
 
