@@ -97,7 +97,10 @@ class Blocks(ASCIIGen):
             out.append(row := [])
             for px in range(0, new_frame.size[0]):
                 col = new_frame.getpixel((px, py))
-                col2 = new_frame.getpixel((px, py + 1)) if self.uni else col
+                try:
+                    col2 = new_frame.getpixel((px, py + 1)) if self.uni else col
+                except IndexError:
+                    col2 = col
                 if col == col2 in [0, 16]:
                     if self.fill_background or self.uni:
                         cell = (".", 2, self.bg, self.bg)

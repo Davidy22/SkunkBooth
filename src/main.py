@@ -17,8 +17,9 @@ converter = Blocks(int(screen.height),
                    int(screen.width),
                    uni=True,
                    fill_background=True)
-webcam_height = int(screen.height / 1.2)
-webcam_width = int(screen.width / 1.2)
+webcam_scale = 1.2
+webcam_height = int(screen.height / webcam_scale)
+webcam_width = int(screen.width / webcam_scale)
 webcam = Webcam(converter, webcam_height, webcam_width)
 effects = []
 effects.append(MainFrame(screen, webcam))
@@ -42,6 +43,8 @@ while True:
             webcam.resize(webcam_height, webcam_width)
             converter.resize(int(screen.height), int(screen.width))
             effects.append(MainFrame(screen, webcam))
+            webcam_height = int(screen.height / webcam_scale)
+            webcam_width = int(screen.width / webcam_scale)
             effects.append(
                 Print(screen,
                       webcam,
