@@ -1,3 +1,4 @@
+import logging
 from typing import List, Tuple
 
 from PIL import Image
@@ -59,15 +60,25 @@ class Blocks(ASCIIGen):
         # Decide what "brush" we're going to use for the rendering.
         self.brush = "▄" if self.uni else "#"
 
-    def convert(self, image: Image) -> List[List[Tuple[int, int, int, int]]]:
-        """Return an ASCII image"""
-        image = image.resize(  # TODO: Account for both height and width bottleneck
-            (
+    def _get_size(self, image: Image) -> Tuple:
+        """Get size to which image should be resized."""
+        if self.height << 1 <= self.width:
+            logging.debug("Resize image to fit height")
+            return (
                 image.size[0] * self.height * 2 // int(image.size[1]),
                 self.height << 1 if self.uni else self.height,
-            ),
-            Image.BILINEAR,
-        )
+            )
+        else:
+            logging.debug("Resize image to fit width")
+            return (
+                self.width,
+                int(image.size[1] * self.width * (1 if self.uni else 0.5)
+                    // int(image.size[0])),
+            )
+
+    def convert(self, image: Image) -> List[List[Tuple[int, int, int, int]]]:
+        """Return an ASCII image"""
+        image = image.resize(self._get_size(image), Image.BILINEAR)
         tmp_img = Image.new("P", (1, 1))
         tmp_img.putpalette(palette)
 
