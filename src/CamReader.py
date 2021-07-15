@@ -36,7 +36,10 @@ class CamReader():
         """Coverts image to grayscale"""
         return cv.cvtColor(im, cv.COLOR_BGR2GRAY)
 
-    def capture_image(self, w: int, h: int) -> np.ndarray:
+    def capture_image(self,
+                      flip: int = 1,
+                      w: int = 0,
+                      h: int = 0) -> np.ndarray:
         """If camera is opened then reads the live camera buffer"""
         ret, frame = self.cap.read()
 
@@ -45,12 +48,13 @@ class CamReader():
             print("Can't receive frame (stream end?). Exiting ...")
             self.close_camera()
             exit(1)
+
+        # flip the image
+        frame = cv.flip(frame, flip)
+
         # rescaling image to lower dimension
-        frame = cv.resize(frame, [w, h])
-        # Display the resulting frame
-        # frame is the coloured image
-        #  gray is the grayscaled version
-        # gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        if w and h:
+            frame = cv.resize(frame, [h, w])
         return frame
 
     def convert_cv2_to_pil(self, im: np.ndarray) -> Image.Image:
@@ -68,10 +72,10 @@ class CamReader():
 
         colors = kmeans.cluster_centers_.astype('float')
         flat_im_dom_color = colors[abs(
-            np.array(flat_gray[None, :], dtype=float) - colors[:, None]).argmin(axis=0)]
+            np.array(flat_gray[None, :], dtype=float)
+            - colors[:, None]).argmin(axis=0)]
         im_dom_color = np.array(flat_im_dom_color.reshape(
-            [gray.shape[0], gray.shape[1]]),
-            dtype='uint8')
+            [gray.shape[0], gray.shape[1]]), dtype='uint8')
         cv.imshow("oof", im_dom_color)
 
         # print(im_dom_color.shape)
@@ -82,10 +86,10 @@ class CamReader():
         asciis = np.array(
             [random.choice(string.punctuation) for n in range(no_of_colors)])
         flat_im_dom_color = asciis[abs(
-            np.array(flat_gray[None, :], dtype=float) - colors[:, None]).argmin(axis=0)]
+            np.array(flat_gray[None, :], dtype=float)
+            - colors[:, None]).argmin(axis=0)]
         im_dom_color = np.array(flat_im_dom_color.reshape(
-            [gray.shape[0], gray.shape[1]]),
-            dtype='str')
+            [gray.shape[0], gray.shape[1]]), dtype='str')
         # print(im_dom_color.shape)
         # print(asciis)
         with np.printoptions(threshold=np.inf):

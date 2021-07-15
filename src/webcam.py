@@ -26,8 +26,7 @@ class Webcam(DynamicRenderer):
 
     def _render_now(self) -> Tuple[List, List]:
         """Extract image from camera, convert to ASCII, print to terminal"""
-        # TODO: Use actual webcam resolution
-        image = self.camera.convert_cv2_to_pil(self.camera.capture_image(400, 300))
+        image = self.camera.convert_cv2_to_pil(self.camera.capture_image())
 
         self.image = self.ascii.convert(image)
 

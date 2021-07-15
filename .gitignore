@@ -34,3 +34,6 @@ build/
 
 # Profiler
 *.prof
+
+# Video files
+*.avi
