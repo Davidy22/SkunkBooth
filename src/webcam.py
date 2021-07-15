@@ -24,6 +24,11 @@ class Webcam(DynamicRenderer):
         self.ascii = asciiGen
         self.image = None
 
+    def resize(self, height: int, width: int) -> None:
+        """Resize output"""
+        self.height = height
+        self.width = width
+
     def _render_now(self) -> Tuple[List, List]:
         """Extract image from camera, convert to ASCII, print to terminal"""
         # TODO: Use actual webcam resolution
