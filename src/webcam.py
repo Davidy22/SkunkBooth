@@ -6,6 +6,7 @@ from asciimatics.renderers import DynamicRenderer
 from asciiGen import ASCIIGen
 from CamReader import CamReader
 from data.constants import palette8
+from fileIO import ImageIO
 
 
 class Webcam(DynamicRenderer):
@@ -28,6 +29,12 @@ class Webcam(DynamicRenderer):
         """Resize output"""
         self.height = height
         self.width = width
+
+    def take_picture_and_save(self) -> None:
+        """Takes an Image snapshot and saves it"""
+        image_to_save = self.image
+        img_io = ImageIO()
+        img_io.write_to_file(image_to_save)
 
     def _render_now(self) -> Tuple[List, List]:
         """Extract image from camera, convert to ASCII, print to terminal"""

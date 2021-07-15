@@ -42,6 +42,7 @@ class MainFrame(Frame):
         controls_layout.add_widget(self._quit_button, 4)
         self.set_theme("monochrome")
         self.fix()
+        self.webcam = webcam
 
         logger._log_info("Mainframe initialized")
 
@@ -59,10 +60,12 @@ class MainFrame(Frame):
         logger._log_info("Gallery was clicked")
         raise NextScene("Gallery")
 
-    @staticmethod
-    def _shoot() -> None:
+    # @staticmethod
+    def _shoot(self) -> None:
         """Take an image"""
         logger._log_info("Camera was clicked")
+        self.webcam.take_picture_and_save()
+        self._screen.refresh()
 
     @staticmethod
     def _quit() -> None:

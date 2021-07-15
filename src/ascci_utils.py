@@ -1,4 +1,3 @@
-import sys
 from time import time
 
 from asciimatics.effects import Print
@@ -28,7 +27,7 @@ scenes = [
     Scene([GalleryFrame(screen)], -1, name="Gallery"),
 ]
 screen.set_scenes(scenes)
-b=a=0
+b = a = 0
 while True:
     try:
         if screen.has_resized():
@@ -52,8 +51,8 @@ while True:
             pause = max(0, min(0.007, a + 0.007 - b))
             screen.wait_for_input(pause)
         a = b
-        #screen.play(scenes, stop_on_resize=True, allow_int=True)
-        #screen.close()
-        #sys.exit(0)
+        # screen.play(scenes, stop_on_resize=True, allow_int=True)
+        # screen.close()
+        # sys.exit(0)
     except ResizeScreenError as e:
         last_scene = e.scene
