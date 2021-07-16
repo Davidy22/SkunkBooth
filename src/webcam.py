@@ -8,13 +8,20 @@ from asciiGen import ASCIIGen
 from CamReader import CamReader
 from data.constants import palette8
 from fileIO import ImageIO, VideoIO
+from filterManager import filterManager
 from logger import CustomLogger
 
 
 class Webcam(DynamicRenderer):
     """Webcam widget for ASCIImatics"""
 
-    def __init__(self, asciiGen: ASCIIGen, height: int = 30, width: int = 30):
+    def __init__(
+        self,
+        asciiGen: ASCIIGen,
+        filters: filterManager,
+        height: int = 30,
+        width: int = 30,
+    ):
         """
         The init function
 
@@ -25,6 +32,7 @@ class Webcam(DynamicRenderer):
         super().__init__(height, width)
         self.camera = CamReader()
         self.ascii = asciiGen
+        self.filters = filters
         self.image = None
         manager = Manager()
         self.manager_lst = manager.list()
@@ -38,7 +46,7 @@ class Webcam(DynamicRenderer):
         """Takes an Image snapshot and saves it"""
         image_to_save = self.image
         img_io = ImageIO(dest=img_name)
-        img_io.write(image=image_to_save)
+        img_io.write(image_to_save)
 
     def recording_utility(self, val: Value) -> None:
         """Coninuously run in the background and check if recording is true"""
@@ -55,8 +63,10 @@ class Webcam(DynamicRenderer):
     def _render_now(self) -> Tuple[List, List]:
         """Extract image from camera, convert to ASCII, print to terminal"""
         image = self.camera.convert_cv2_to_pil(self.camera.capture_image())
+        image = self.filters.pil_filter(image)
 
         self.image = self.ascii.convert(image)
+        self.image = self.filters.ascii_filter(self.image)
 
         # Putting the images in manager so that recording_utilty can pick them up
         if len(self.manager_lst) != 0:

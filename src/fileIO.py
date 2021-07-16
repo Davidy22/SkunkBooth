@@ -13,7 +13,7 @@ from logger import CustomLogger
 class IOBase:
     """ASCII conversion module, subclass for access to convert()"""
 
-    def __init__(self, font: str = "Input", fontSize: int = 30):
+    def __init__(self, font: str = "Hack", fontSize: int = 30):
         self.fx, self.fy = 0, 0
         self.setFont(font, fontSize)
         self.maxCache = 5000
@@ -25,7 +25,7 @@ class IOBase:
             self.font = ImageFont.truetype(fp, size)
         except OSError:
             CustomLogger._log_error(f"Font {fp} not found, falling back.")
-            fp = f'{path.join(path.dirname(path.abspath(__file__)), "data", "Input.ttf")}'
+            fp = f'{path.join(path.dirname(path.abspath(__file__)), "data", "Hack.ttf")}'
             self.font = ImageFont.truetype(fp, size)
 
         px, py = self.fx, self.fy
@@ -110,7 +110,7 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
     def __init__(
         self,
         dim: Tuple[int, int] = None,
-        fps: int = 60,
+        fps: int = 20,
         dest: str = "gallery/out.avi",
         **kwargs,
     ):
