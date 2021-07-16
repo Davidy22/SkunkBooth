@@ -50,12 +50,6 @@ class MainFrame(Frame):
         self.fix()
         self.webcam = webcam
 
-        """This is the part used for MP"""
-        # pros = Process(name="Background work", target=self.webcam.recording_utility, args=(val,))
-        # pros.daemon = True
-        # pros.start()
-        # p = Pool()
-        # p.apply_async(func=self.webcam.recording_utility, args=(val,))
         logger._log_info("Mainframe initialized")
 
     @staticmethod

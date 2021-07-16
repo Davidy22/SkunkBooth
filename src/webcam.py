@@ -32,9 +32,6 @@ class Webcam(DynamicRenderer):
         self.ascii = asciiGen
         self.filters = filters
         self.image = None
-        # manager = Manager()
-        # self.manager_lst = manager.list()
-        # self.manager_lst.append(self.image)
 
     def resize(self, height: int, width: int) -> None:
         """Resize output"""
@@ -46,18 +43,6 @@ class Webcam(DynamicRenderer):
         img_io = ImageIO(dest=img_name)
         img_io.write(image_to_save)
 
-    # def recording_utility(self, val: Value) -> None:
-    #     """Coninuously run in the background and check if recording is true"""
-    #     v = VideoIO()
-    #     while True:
-    #         if val.value == 1:
-    #             try:
-    #                 lst = list(self.manager_lst)
-    #                 CustomLogger._log_info(v.write(lst[0]))
-    #             except Exception as e:
-    #                 CustomLogger._log_error(e)
-    #                 pass
-
     def _render_now(self) -> Tuple[List, List]:
         """Extract image from camera, convert to ASCII, print to terminal"""
         image = self.camera.convert_cv2_to_pil(self.camera.capture_image())
@@ -65,11 +50,6 @@ class Webcam(DynamicRenderer):
 
         self.image = self.ascii.convert(image)
         self.image = self.filters.ascii_filter(self.image)
-
-        # Putting the images in manager so that recording_utilty can pick them up
-        # if len(self.manager_lst) != 0:
-        #     self.manager_lst.pop()
-        # self.manager_lst.append(self.image)
 
         for y, row in enumerate(self.image):
             for x, i in enumerate(row):

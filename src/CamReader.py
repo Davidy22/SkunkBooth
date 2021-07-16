@@ -83,11 +83,6 @@ class CamReader():
             [gray.shape[0], gray.shape[1]]), dtype='uint8')
         cv.imshow("oof", im_dom_color)
 
-        # print(im_dom_color.shape)
-        # cv.imshow(im_dom_color)
-
-        # r = lambda: random.randint(0,255)
-        # asciis = np.array(["%06x" % random.randint(0, 0xFFFFFF) for n in range(no_of_colors)])
         asciis = np.array(
             [random.choice(string.punctuation) for n in range(no_of_colors)])
         flat_im_dom_color = asciis[abs(
@@ -95,12 +90,10 @@ class CamReader():
             - colors[:, None]).argmin(axis=0)]
         im_dom_color = np.array(flat_im_dom_color.reshape(
             [gray.shape[0], gray.shape[1]]), dtype='str')
-        # print(im_dom_color.shape)
-        # print(asciis)
+
         with np.printoptions(threshold=np.inf):
             print('\n'.join(''.join(str(cell) for cell in row)
                             for row in im_dom_color))
-        # print("\n\n\n\n\n\n")
         # Added this for the continous effect, might have to change 0.5 to frame rate later
         sleep(0.5)
 
