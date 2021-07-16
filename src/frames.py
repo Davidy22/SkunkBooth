@@ -1,8 +1,7 @@
 import os
 import sys
 from datetime import datetime
-from multiprocessing import Process, Value
-from typing import Any
+from typing import Any, Callable
 
 from asciimatics.exceptions import (
     NextScene, ResizeScreenError, StopApplication
@@ -18,13 +17,11 @@ from webcam import Webcam
 
 logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
 
-val = Value('i', 0)
-
 
 class MainFrame(Frame):
     """Recreatable frame to implement main ui"""
 
-    def __init__(self, screen: Any, webcam: Webcam) -> None:
+    def __init__(self, screen: Any, webcam: Webcam, toggle: Callable) -> None:
         """Initialize frame"""
         super(MainFrame, self).__init__(screen,
                                         int(screen.height//10),
@@ -39,7 +36,7 @@ class MainFrame(Frame):
         self._gallery_button = Button(u"🖼 Gallery", self._gallery, add_box=True)
         self._effects_button = Button(u"🖌 Effects", self._filters, add_box=True)
         self._camera_button = Button(u"📷 Shoot", self._shoot, add_box=True)
-        self._video_recording = CheckBox(text=u"⏯︎ Record", on_change=self._start_stop_recording)
+        self._video_recording = CheckBox(text=u"⏯︎ Record", on_change=toggle)
         self._quit_button = Button(u"🛑 Quit", self._quit, add_box=True)
 
         controls_layout = Layout([1, 1, 1, 1, 1])
@@ -52,9 +49,6 @@ class MainFrame(Frame):
         self.set_theme("bright")
         self.fix()
         self.webcam = webcam
-        pros = Process(name="Background work", target=self.webcam.recording_utility, args=(val,))
-        pros.daemon = True
-        pros.start()
 
         logger._log_info("Mainframe initialized")
 
@@ -63,18 +57,6 @@ class MainFrame(Frame):
         """Open effects"""
         logger._log_info("Effects was clicked")
         raise NextScene("Filters")
-
-    def _start_stop_recording(self) -> None:
-        """For the recording functionality"""
-        if val.value == 1:
-            logger._log_info("Recording started inside if, value= " + str(val.value))
-            val.value = 0
-            # queue.put(self.webcam)
-            return None
-        else:
-            logger._log_info("Recording stopped inside else, value= " + str(val.value))
-            val.value = 1
-            return None
 
     @staticmethod
     def _gallery() -> None:
