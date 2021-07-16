@@ -6,7 +6,8 @@ from cv2 import VideoWriter, VideoWriter_fourcc, imwrite
 from numpy import array
 from PIL import Image, ImageDraw, ImageFont
 
-from .data import constants
+from skunkbooth.data import constants
+
 from .logger import CustomLogger
 
 
@@ -20,12 +21,12 @@ class IOBase:
 
     def setFont(self, fp: str, size: int) -> None:
         """Set render font, fall back to Input if font name is invalid"""
-        fp = f'{path.join(path.dirname(path.abspath(__file__)), "data", fp)}.ttf'
+        fp = f'{path.join(path.dirname(path.abspath(__file__)), "..", "data", fp)}.ttf'
         try:
             self.font = ImageFont.truetype(fp, size)
         except OSError:
             CustomLogger._log_error(f"Font {fp} not found, falling back.")
-            fp = f'{path.join(path.dirname(path.abspath(__file__)), "data", "Hack.ttf")}'
+            fp = f'{path.join(path.dirname(path.abspath(__file__)), "..", "data", "Hack.ttf")}'
             self.font = ImageFont.truetype(fp, size)
 
         px, py = self.fx, self.fy

@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 from PIL import Image
 
-from .data.constants import palette
+from skunkbooth.data.constants import palette
 
 
 class ASCIIGen:

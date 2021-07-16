@@ -3,9 +3,10 @@ from typing import List, Tuple
 
 from asciimatics.renderers import DynamicRenderer
 
+from skunkbooth.data.constants import palette8
+
 from .asciiGen import ASCIIGen
 from .CamReader import CamReader
-from .data.constants import palette8
 from .fileIO import ImageIO
 from .filterManager import filterManager
 
