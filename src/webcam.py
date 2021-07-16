@@ -7,7 +7,7 @@ from asciimatics.renderers import DynamicRenderer
 from asciiGen import ASCIIGen
 from CamReader import CamReader
 from data.constants import palette8
-from fileIO import ImageIO
+from fileIO import ImageIO, VideoIO
 from filterManager import filterManager
 from logger import CustomLogger
 

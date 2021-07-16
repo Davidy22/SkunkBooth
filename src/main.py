@@ -52,7 +52,7 @@ logger._log_info(
     )
 )
 
-webcam = Webcam(converter, webcam_height, webcam_width)
+webcam = Webcam(converter, filters, webcam_height, webcam_width)
 
 effects = []
 header_figlet = Print(
