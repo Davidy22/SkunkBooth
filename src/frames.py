@@ -1,7 +1,7 @@
 import os
 import sys
 from datetime import datetime
-from multiprocessing import Process, Value
+from multiprocessing import Process, Value, Pool
 from typing import Any
 
 from asciimatics.exceptions import (
@@ -52,10 +52,13 @@ class MainFrame(Frame):
         self.set_theme("bright")
         self.fix()
         self.webcam = webcam
-        pros = Process(name="Background work", target=self.webcam.recording_utility, args=(val,))
-        pros.daemon = True
-        pros.start()
 
+        """This is the part used for MP"""
+        # pros = Process(name="Background work", target=self.webcam.recording_utility, args=(val,))
+        # pros.daemon = True
+        # pros.start()
+        # p = Pool()
+        # p.apply_async(func=self.webcam.recording_utility, args=(val,))
         logger._log_info("Mainframe initialized")
 
     @staticmethod
