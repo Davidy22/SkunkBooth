@@ -30,6 +30,32 @@ class filterManager:
             (self.pil, self.ascii)[i.textOp][i.name] = i
         self.loadedPil, self.loadedAscii = {}, {}
 
+    @property
+    def loaded(self) -> List:
+        """Get loaded filters"""
+        return list(self.loadedPil.values()) + list(self.loadedAscii.values())
+
+    @property
+    def unloaded(self) -> List:
+        """Get unloaded filters"""
+        return list(self.pil.values()) + list(self.ascii.values())
+
+    @property
+    def filters(self) -> List:
+        """Get all filters"""
+        return self.loaded + self.unloaded
+
+    def is_loaded(self, filterID: str) -> bool:
+        """Check if filter is loaded"""
+        return filterID in self.loadedPil or filterID in self.loadedAscii
+
+    def toggle(self, name: str) -> None:
+        """Toggle specified filter"""
+        if name in self.ascii or name in self.pil:
+            self.load(name)
+        elif name in self.loadedAscii or name in self.loadedPil:
+            self.unload(name)
+
     def load(self, name: str) -> None:
         """Load specified filter"""
         if name in self.ascii:
