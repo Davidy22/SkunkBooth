@@ -55,12 +55,10 @@ while True:
             pause = max(0, min(0.007, a + 0.007 - b))
             screen.wait_for_input(pause)
         a = b
-        # screen.play(scenes, stop_on_resize=True, allow_int=True)
-        # screen.close()
-        # sys.exit(0)
     except ResizeScreenError as e:
         last_scene = e.scene
-    except StopApplication:
+        screen.close()
         quit(0)
-    except KeyboardInterrupt:
+    except (StopApplication, KeyboardInterrupt):
+        screen.close()
         quit(0)
