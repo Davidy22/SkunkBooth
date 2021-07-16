@@ -8,7 +8,7 @@ from asciimatics.screen import Screen
 from asciiGen import Blocks
 from fileIO import VideoIO
 from filterManager import filterManager
-from frames import GalleryFrame, MainFrame
+from frames import FilterFrame, GalleryFrame, MainFrame
 from webcam import Webcam
 
 vid = VideoIO()
@@ -18,8 +18,6 @@ converter = Blocks(
     int(screen.height), int(screen.width), uni=True, fill_background=True
 )
 filters = filterManager()
-filters.load("Stars")
-filters.load("Invert")
 webcam_scale = 1.2
 webcam_height = int(screen.height / webcam_scale)
 webcam_width = int(screen.width / webcam_scale)
@@ -34,9 +32,11 @@ effects.append(
         x=screen.width - webcam_width >> 1,
     )
 )
+fFrame = FilterFrame(screen, filters)
 scenes = [
     Scene(effects, -1, name="Main"),
     Scene([GalleryFrame(screen)], -1, name="Gallery"),
+    Scene([fFrame], -1, name="Filters")
 ]
 screen.set_scenes(scenes)
 b = a = 0
@@ -59,9 +59,12 @@ while True:
                     x=screen.width - webcam_width >> 1,
                 )
             )
+            fNext = FilterFrame(screen, filters, data=fFrame._data)
+            fFrame = fNext
             scenes = [
                 Scene(effects, -1, name="Main"),
                 Scene([GalleryFrame(screen)], -1, name="Gallery"),
+                Scene([fFrame], -1, name="Filters"),
             ]
             screen.set_scenes(scenes)
 
