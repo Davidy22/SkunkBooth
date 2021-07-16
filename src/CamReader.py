@@ -1,12 +1,9 @@
 import os
-import random
-import string
 from time import sleep
 
 import cv2 as cv
 import numpy as np
 from PIL import Image
-from sklearn.cluster import KMeans
 
 from logger import CustomLogger
 
@@ -67,44 +64,3 @@ class CamReader():
         im_copy = cv.cvtColor(im, cv.COLOR_BGR2RGB)
         im_pil = Image.fromarray(im_copy)
         return im_pil
-
-    def print_to_dom_color(self, gray: np.ndarray, no_of_colors: int) -> None:
-        """Function for printing photo to the screen in ascii"""
-        flat_gray = gray.reshape([gray.shape[0] * gray.shape[1], 1])
-
-        kmeans = KMeans(n_clusters=no_of_colors)
-        kmeans.fit(flat_gray)
-
-        colors = kmeans.cluster_centers_.astype('float')
-        flat_im_dom_color = colors[abs(
-            np.array(flat_gray[None, :], dtype=float)
-            - colors[:, None]).argmin(axis=0)]
-        im_dom_color = np.array(flat_im_dom_color.reshape(
-            [gray.shape[0], gray.shape[1]]), dtype='uint8')
-        cv.imshow("oof", im_dom_color)
-
-        asciis = np.array(
-            [random.choice(string.punctuation) for n in range(no_of_colors)])
-        flat_im_dom_color = asciis[abs(
-            np.array(flat_gray[None, :], dtype=float)
-            - colors[:, None]).argmin(axis=0)]
-        im_dom_color = np.array(flat_im_dom_color.reshape(
-            [gray.shape[0], gray.shape[1]]), dtype='str')
-
-        with np.printoptions(threshold=np.inf):
-            print('\n'.join(''.join(str(cell) for cell in row)
-                            for row in im_dom_color))
-        # Added this for the continous effect, might have to change 0.5 to frame rate later
-        sleep(0.5)
-
-
-if __name__ == '__main__':
-    camReader = CamReader()
-    numpyImage = camReader.capture_image(100, 100)
-
-    camReader.print_to_dom_color(camReader.convert_gray(numpyImage), 10)
-
-    pilImage = camReader.convert_cv2_to_pil(numpyImage)
-    pilImage.show()
-    # cv.imshow('frame', numpyImage)
-    camReader.close_camera()
