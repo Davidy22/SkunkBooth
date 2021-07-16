@@ -14,12 +14,11 @@ from webcam import Webcam
 vid = VideoIO()
 screen = Screen.open(unicode_aware=True)
 last_scene = None
-converter = Blocks(int(screen.height),
-                   int(screen.width),
-                   uni=True,
-                   fill_background=True)
+converter = Blocks(
+    int(screen.height), int(screen.width), uni=True, fill_background=True
+)
 filters = filterManager()
-filters.load("Snowman")
+filters.load("Stars")
 filters.load("Invert")
 webcam_scale = 1.2
 webcam_height = int(screen.height / webcam_scale)
@@ -28,10 +27,13 @@ webcam = Webcam(converter, filters, webcam_height, webcam_width)
 effects = []
 effects.append(MainFrame(screen, webcam))
 effects.append(
-    Print(screen,
-          webcam,
-          y=screen.height - webcam_height >> 1,
-          x=screen.width - webcam_width >> 1))
+    Print(
+        screen,
+        webcam,
+        y=screen.height - webcam_height >> 1,
+        x=screen.width - webcam_width >> 1,
+    )
+)
 scenes = [
     Scene(effects, -1, name="Main"),
     Scene([GalleryFrame(screen)], -1, name="Gallery"),
@@ -50,20 +52,26 @@ while True:
             webcam_height = int(screen.height / webcam_scale)
             webcam_width = int(screen.width / webcam_scale)
             effects.append(
-                Print(screen,
-                      webcam,
-                      y=screen.height - webcam_height >> 1,
-                      x=screen.width - webcam_width >> 1))
+                Print(
+                    screen,
+                    webcam,
+                    y=screen.height - webcam_height >> 1,
+                    x=screen.width - webcam_width >> 1,
+                )
+            )
             scenes = [
                 Scene(effects, -1, name="Main"),
                 Scene([GalleryFrame(screen)], -1, name="Gallery"),
             ]
             screen.set_scenes(scenes)
+
         screen.draw_next_frame()
         b = time()
         if b - a < 0.05:
-            pause = max(0, min(0.007, a + 0.007 - b))
+            pause = max(0, min(0.001, a + 0.001 - b))
             screen.wait_for_input(pause)
+        else:
+            screen.wait_for_input(0)
         a = b
     except ResizeScreenError as e:
         last_scene = e.scene
