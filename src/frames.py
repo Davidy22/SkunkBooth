@@ -3,7 +3,6 @@ from datetime import datetime
 from typing import Any, Callable
 
 from asciimatics.exceptions import NextScene, StopApplication
-from asciimatics.scene import Scene
 from asciimatics.widgets import (
     Button, CheckBox, FileBrowser, Frame, Label, Layout
 )
