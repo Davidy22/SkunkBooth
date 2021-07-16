@@ -11,7 +11,7 @@ from asciimatics.screen import Screen
 from asciiGen import Blocks
 from fileIO import VideoIO
 from filterManager import filterManager
-from frames import GalleryFrame, MainFrame
+from frames import FilterFrame, GalleryFrame, MainFrame
 from logger import CustomLogger
 from webcam import Webcam
 
@@ -27,8 +27,6 @@ logger._log_info(
 
 last_scene = None
 filters = filterManager()
-filters.load("Stars")
-filters.load("Invert")
 converter = Blocks(screen.height, screen.width, uni=True, fill_background=True)
 
 
@@ -64,9 +62,11 @@ effects.append(MainFrame(screen, webcam))
 effects.append(
     Print(screen, webcam, y=FIGLET_MAXHEIGHT + 3, x=int(screen.width / 6) + offset)
 )
+fFrame = FilterFrame(screen, filters)
 scenes = [
     Scene(effects, -1, name="Main"),
     Scene([GalleryFrame(screen)], -1, name="Gallery"),
+    Scene([fFrame], -1, name="Filters")
 ]
 screen.set_scenes(scenes)
 b = a = 0
@@ -92,9 +92,12 @@ while True:
                     x=int(screen.width / 6) + offset,
                 )
             )
+            fNext = FilterFrame(screen, filters, data=fFrame._data)
+            fFrame = fNext
             scenes = [
                 Scene(effects, -1, name="Main"),
                 Scene([GalleryFrame(screen)], -1, name="Gallery"),
+                Scene([fFrame], -1, name="Filters"),
             ]
 
             screen.set_scenes(scenes)
