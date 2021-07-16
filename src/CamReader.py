@@ -1,6 +1,7 @@
 import os
 import random
 import string
+from threading import Thread
 from time import sleep
 
 import cv2 as cv
@@ -16,6 +17,9 @@ class CamReader():
 
     def __init__(self):
         self.cap = self._open_camera()
+        self.frame = None
+        self.stopped = False
+        self.clear_cam()
 
     @staticmethod
     def _open_camera() -> cv.VideoCapture:
@@ -27,12 +31,13 @@ class CamReader():
             CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")._log_error("Cannot open camera")
             return None
 
-        sleep(1)
+        sleep(3)
         return cap
 
     def close_camera(self) -> None:
         """Closes the camera"""
         # When everything done, release the capture
+        self.stopped = True
         self.cap.release()
 
     def convert_gray(self, im: np.ndarray) -> np.ndarray:
@@ -61,6 +66,40 @@ class CamReader():
         if w and h:
             frame = cv.resize(frame, [h, w])
         return frame
+
+    def clear_cam(self) -> None:
+        """Removing initial null frames from camera"""
+        i = 0
+        while i < 50:
+            i = i + 1
+            self.cap.read()
+
+    def read_cam(self) -> None:
+        """Ananlogues to capture_image but didn't want to touch it"""
+        ret = True
+        # while not self.stopped:
+        print(self.cap)
+        if not ret:
+            print("sadge")
+            self.close_camera()
+        else:
+            ret, frame = self.cap.read()
+            print(ret, frame)
+            self.frame = frame
+
+    def get_image(self) -> Image:
+        """:return pil image of captured in live frame"""
+        print(self.frame)
+        im_copy = cv.cvtColor(self.frame, cv.COLOR_BGR2RGB)
+        im_pil = Image.fromarray(im_copy)
+        # lock.release()
+        return im_pil
+
+    def start(self) -> None:
+        """Initiate a thread to read camera"""
+        self.stopped = False
+        Thread(target=self.read_cam, args=()).start()
+        return self
 
     def convert_cv2_to_pil(self, im: np.ndarray) -> Image.Image:
         """Converts numpy image to PIL image"""
@@ -107,11 +146,12 @@ class CamReader():
 
 if __name__ == '__main__':
     camReader = CamReader()
-    numpyImage = camReader.capture_image(100, 100)
-
-    camReader.print_to_dom_color(camReader.convert_gray(numpyImage), 10)
-
-    pilImage = camReader.convert_cv2_to_pil(numpyImage)
-    pilImage.show()
+    camReader.start()
+    # numpyImage = camReader.capture_image(100, 100)
+    #
+    # camReader.print_to_dom_color(camReader.convert_gray(numpyImage), 10)
+    #
+    # pilImage = camReader.convert_cv2_to_pil(numpyImage)
+    # pilImage.show()
     # cv.imshow('frame', numpyImage)
-    camReader.close_camera()
+    # camReader.close_camera()
