@@ -110,8 +110,8 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
     def __init__(
         self,
         dim: Tuple[int, int] = None,
-        fps: int = 60,
-        dest: str = "Gallery/out.avi",
+        fps: int = 20,
+        dest: str = "gallery/out.avi",
         **kwargs,
     ):
         """
