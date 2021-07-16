@@ -52,7 +52,7 @@ class Webcam(DynamicRenderer):
         """Coninuously run in the background and check if recording is true"""
         v = VideoIO()
         while True:
-            if val.value == 0:
+            if val.value == 1:
                 try:
                     lst = list(self.manager_lst)
                     CustomLogger._log_info(v.write(lst[0]))

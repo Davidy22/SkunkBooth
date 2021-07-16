@@ -9,7 +9,9 @@ from asciimatics.exceptions import (
 )
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, FileBrowser, Frame, Label, Layout
+from asciimatics.widgets import (
+    Button, CheckBox, FileBrowser, Frame, Label, Layout
+)
 
 from logger import CustomLogger
 from webcam import Webcam
@@ -37,7 +39,7 @@ class MainFrame(Frame):
         self._gallery_button = Button(u"🖼 Gallery", self._gallery, add_box=True)
         self._effects_button = Button(u"🖌 Effects", self._effects, add_box=True)
         self._camera_button = Button(u"📷 Shoot", self._shoot, add_box=True)
-        self._video_recording = Button(u"⏯︎ Record", self._start_stop_recording, add_box=True)
+        self._video_recording = CheckBox(text=u"⏯︎ Record", on_change=self._start_stop_recording)
         self._quit_button = Button(u"🛑 Quit", self._quit, add_box=True)
 
         controls_layout = Layout([1, 1, 1, 1, 1])

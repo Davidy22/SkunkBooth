@@ -1,4 +1,3 @@
-import logging
 from typing import List, Tuple
 
 from PIL import Image
@@ -63,13 +62,13 @@ class Blocks(ASCIIGen):
     def _get_size(self, image: Image) -> Tuple:
         """Get size to which image should be resized."""
         if self.height << 1 <= self.width:
-            logging.debug("Resize image to fit height")
+            # logging.debug("Resize image to fit height")
             return (
                 image.size[0] * self.height * 2 // int(image.size[1]),
                 self.height << 1 if self.uni else self.height,
             )
         else:
-            logging.debug("Resize image to fit width")
+            # logging.debug("Resize image to fit width")
             return (
                 self.width,
                 int(image.size[1] * self.width * (1 if self.uni else 0.5)
