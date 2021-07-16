@@ -1,4 +1,4 @@
-import sys
+from sys import platform
 from typing import List, Tuple
 
 from asciimatics.renderers import DynamicRenderer
@@ -29,22 +29,21 @@ class Webcam(DynamicRenderer):
         """Resize output"""
         super().__init__(height, width)
 
-    def take_picture_and_save(self) -> None:
+    def take_picture_and_save(self, img_name: str) -> None:
         """Takes an Image snapshot and saves it"""
         image_to_save = self.image
-        img_io = ImageIO()
-        img_io.write_to_file(image_to_save)
+        img_io = ImageIO(dest=img_name)
+        img_io.write(image=image_to_save)
 
     def _render_now(self) -> Tuple[List, List]:
         """Extract image from camera, convert to ASCII, print to terminal"""
-        # TODO: Use actual webcam resolution
-        image = self.camera.convert_cv2_to_pil(self.camera.capture_image(400, 300))
+        image = self.camera.convert_cv2_to_pil(self.camera.capture_image())
 
         self.image = self.ascii.convert(image)
 
         for y, row in enumerate(self.image):
             for x, i in enumerate(row):
-                if sys.platform == "win32":
+                if platform == "win32":
                     self._write(i[0], x, y, palette8[i[2]], i[1], palette8[i[3]])
                 else:
                     self._write(i[0], x, y, i[2], i[1], i[3])

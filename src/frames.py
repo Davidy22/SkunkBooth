@@ -1,5 +1,6 @@
 import os
 import sys
+from datetime import datetime
 from typing import Any
 
 from asciimatics.exceptions import (
@@ -65,7 +66,8 @@ class MainFrame(Frame):
     def _shoot(self) -> None:
         """Take an image"""
         logger._log_info("Camera was clicked")
-        self.webcam.take_picture_and_save()
+        img_name = f"gallery/Image-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.jpg"
+        self.webcam.take_picture_and_save(img_name)
         self._screen.refresh()
 
     @staticmethod

@@ -1,3 +1,5 @@
+from os import path
+from sys import platform
 from typing import List, Tuple
 
 from cv2 import VideoWriter, VideoWriter_fourcc, imwrite
@@ -5,29 +7,46 @@ from numpy import array
 from PIL import Image, ImageDraw, ImageFont
 
 from data import constants
+from logger import CustomLogger
 
 
 class IOBase:
     """ASCII conversion module, subclass for access to convert()"""
 
-    def __init__(self):
-        self.font = ImageFont.truetype("data/Input.ttf", 30)  # TODO: Font config
+    def __init__(self, font: str = "Input", fontSize: int = 30):
+        self.fx, self.fy = 0, 0
+        self.setFont(font, fontSize)
+        self.maxCache = 5000
+
+    def setFont(self, fp: str, size: int) -> None:
+        """Set render font, fall back to Input if font name is invalid"""
+        fp = f'{path.join(path.dirname(path.abspath(__file__)), "data", fp)}.ttf'
+        try:
+            self.font = ImageFont.truetype(fp, size)
+        except OSError:
+            CustomLogger._log_error(f"Font {fp} not found, falling back.")
+            fp = f'{path.join(path.dirname(path.abspath(__file__)), "data", "Input.ttf")}'
+            self.font = ImageFont.truetype(fp, size)
+
+        px, py = self.fx, self.fy
         self.fx, self.fy = self.font.getsize("g")
         self.glyphs = {}
         self.renderCache = {}
-        self.maxCache = 5000
+        self.bold = max(1, size // 30)
 
-        self.colours = {i: Image.new("RGB", (self.fx, self.fy)) for i in range(256)}
-        for i in self.colours:
-            self.colours[i].paste(
-                tuple(reversed(constants.palette[i * 3:i * 3 + 3])),
-                (0, 0, self.fx, self.fy),
-            )
-        self.underline = Image.new("RGBA", (self.fx, self.fy))
-        ImageDraw.Draw(self.underline).line(
-            (0, self.fy - self.fy // 11, self.fx, self.fy - self.fy // 11),
-            width=self.fy // 8,
-        )
+        if px != self.fx or py != self.fy:
+            self.colours = {i: Image.new("RGB", (self.fx, self.fy)) for i in range(256)}
+            for i in self.colours:
+                self.colours[i].paste(
+                    tuple(reversed(constants.palette[i * 3:i * 3 + 3])),
+                    (0, 0, self.fx, self.fy),
+                )
+            self.underline = Image.new("L", (self.fx, self.fy))
+            self.underline.paste(255, (0, self.fy - self.fy // 11, self.fx, self.fy))
+
+    def write(self, image: List[List[Tuple[int, int, int]]]) -> bool:
+        """Template method for write()"""
+        return False
 
     def convert(self, image: List[List[Tuple[int, int, int, int]]]) -> array:
         """
@@ -47,31 +66,30 @@ class IOBase:
                     out.paste(self.colours[pixel[0]], (x * self.fx, y * self.fy))
                     continue
 
-                char = pixel[0]
-                if char not in self.glyphs:
-                    # Cache character glyphs
-                    glyph = Image.new("RGBA", (self.fx, self.fy))
-                    ImageDraw.Draw(glyph).text((0, 0), char, font=self.font)
-                    self.glyphs[char] = glyph
-
                 # Render character, (text colour, bg colour, char, attribute)
                 if pixel in self.renderCache:
                     render = self.renderCache[pixel]
                 else:
                     fg = self.colours[pixel[2]]
                     bg = self.colours[pixel[3]]
-                    glyph = self.glyphs[char]
                     attr = pixel[1]
+                    char = pixel[0]
 
                     # Attributes
-                    if attr in constants.L_BOLD:
-                        if char + "bold" in self.glyphs:
-                            glyph = self.glyphs[char + "bold"]
-                        else:
-                            temp = glyph.copy()
-                            temp.paste(glyph, (self.fx // 20, 0), glyph)
-                            temp.paste(glyph, (0, self.fy // 20), glyph)
-                            glyph = self.glyphs[char + "bold"] = temp
+                    charID = char + "bd" if attr in constants.L_BOLD else char
+                    if charID in self.glyphs:
+                        glyph = self.glyphs[charID]
+                    else:
+                        # Cache character glyphs
+                        glyph = Image.new("L", (self.fx, self.fy))
+                        ImageDraw.Draw(glyph).text(
+                            (0, 0),
+                            char,
+                            255,
+                            font=self.font,
+                            stroke_width=self.bold if charID[-2:] == "bd" else 0,
+                        )
+                        self.glyphs[charID] = glyph
                     if attr in constants.L_REVERSE:
                         fg, bg = bg, fg
                     if attr in constants.L_UNDERLINE:
@@ -90,7 +108,11 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
     """ASCII to video saver"""
 
     def __init__(
-        self, dim: Tuple[int, int] = None, fps: int = 60, dest: str = "out.avi"
+        self,
+        dim: Tuple[int, int] = None,
+        fps: int = 60,
+        dest: str = "Gallery/out.avi",
+        **kwargs,
     ):
         """
         Set image dimensions and destination, dimensions must remain constant while recording.
@@ -98,7 +120,7 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
         dim: Character dimensions of the ASCII video. Inferred from first frame if missing
         dest: File destination to save to.
         """
-        super().__init__()
+        super().__init__(**kwargs)
         if dim is None:
             self.dest = dest
             self.fps = fps
@@ -110,7 +132,7 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
                 (dim[0] * self.fx, dim[1] * self.fy),
             )
 
-    def write(self, image: List[List[Tuple[int, int, int]]]) -> None:
+    def write(self, image: List[List[Tuple[int, int, int]]]) -> bool:
         """Write a frame to the video."""
         if self.dest is None:
             raise Exception("Attempted write to closed file")
@@ -122,30 +144,52 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
                 (len(image[0]) * self.fx, len(image) * self.fy),
             )
 
-        self.dest.write(self.convert(image))
+        try:
+            self.dest.write(self.convert(image))
+            return True
+        except Exception:
+            return False
 
     def close(self) -> None:
         """Close and save the video file."""
-        self.dest.release()
+        try:
+            self.dest.release()
+        except Exception:
+            return
         self.dest = None
 
 
 class ImageIO(IOBase):
     """ASCII to image saver"""
 
-    def __init__(self, dest: str = "SaveImage.jpg"):
+    def __init__(self, dest: str = "Gallery/SaveImage.jpg", **kwargs):
+        super().__init__(**kwargs)
         self.dest = dest
-        super().__init__()
 
-    def write_to_file(self, image: List[List[Tuple[int, int, int]]]) -> bool:
+    def write(self, image: List[List[Tuple[int, int, int]]], dest: str = None) -> bool:
         """For writing image to file"""
-        return imwrite(self.dest, self.convert(image))
+        return imwrite(dest if dest else self.dest, self.convert(image))
+
+
+class AsciiIO(IOBase):
+    """ASCII to text saver"""
+
+    def __init__(self, dest: str = "out", **kwargs):
+        super().__init__(**kwargs)
+        self.dest = dest
+        if platform == "win32":
+            self.dest += ".txt"
+
+    def write(self, image: List[List[Tuple[int, int, int]]], dest: str = None) -> bool:
+        """For writing image to file"""
+        with open(dest if dest else self.dest, "w") as f:
+            return f.write("\n".join("".join(j[0] for j in i) for i in image))
 
 
 if __name__ == "__main__":
     import random
 
-    v = VideoIO()
+    v = VideoIO(font="asfddsaf", fontSize=15)
     [
         v.write(
             [
@@ -165,11 +209,19 @@ if __name__ == "__main__":
     ]
     v.close()
 
-    image = [[(
-        chr(random.randint(97, 122)),
-        random.randint(1, 8),
-        (0 + (j + 1) * (k + 1)) % 255,
-        random.randint(250, 255),
-    ) for j in range(20)] for k in range(20)]
-    wtr_img = ImageIO()
-    wtr_img.write_to_file(image=image)
+    image = [
+        [
+            (
+                chr(random.randint(97, 122)),
+                random.randint(1, 8),
+                (0 + (j + 1) * (k + 1)) % 255,
+                random.randint(250, 255),
+            )
+            for j in range(20)
+        ]
+        for k in range(20)
+    ]
+    wtr_img = AsciiIO()
+    wtr_img.write(image=image)
+    wtr_img = ImageIO(font="ComicMono", fontSize=100)
+    wtr_img.write(image=image)
