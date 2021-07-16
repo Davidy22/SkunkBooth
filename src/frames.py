@@ -9,9 +9,7 @@ from asciimatics.exceptions import (
 )
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
-from asciimatics.widgets import (
-    Button, CheckBox, FileBrowser, Frame, Label, Layout
-)
+from asciimatics.widgets import Button, FileBrowser, Frame, Label, Layout
 
 from logger import CustomLogger
 from webcam import Webcam
