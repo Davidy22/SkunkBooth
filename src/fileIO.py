@@ -111,7 +111,7 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
         self,
         dim: Tuple[int, int] = None,
         fps: int = 60,
-        dest: str = "Gallery/out.avi",
+        dest: str = "gallery/out.avi",
         **kwargs,
     ):
         """

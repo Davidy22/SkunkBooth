@@ -1,6 +1,7 @@
 import os
 import sys
 from datetime import datetime
+from multiprocessing import Process, Value
 from typing import Any
 
 from asciimatics.exceptions import (
@@ -8,12 +9,16 @@ from asciimatics.exceptions import (
 )
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, FileBrowser, Frame, Label, Layout
+from asciimatics.widgets import (
+    Button, CheckBox, FileBrowser, Frame, Label, Layout
+)
 
 from logger import CustomLogger
 from webcam import Webcam
 
 logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
+
+val = Value('i', 0)
 
 
 class MainFrame(Frame):
@@ -30,7 +35,7 @@ class MainFrame(Frame):
         self._gallery_button = Button("🖼  Gallery", self._gallery, add_box=True)
         self._effects_button = Button("🖌  Effects", self._effects, add_box=True)
         self._camera_button = Button(u"📷 Take a picture", self._shoot, add_box=True)
-        self._video_recording = Button(u"⏯︎ Rec. Start/Stop", self._start_stop_recording, add_box=True)
+        self._video_recording = CheckBox(text=u"⏯︎ Rec. Start/Stop", on_change=self._start_stop_recording)
         self._quit_button = Button("🛑 Quit", self._quit, add_box=True)
         camera_layout = Layout([100], fill_frame=True)
         self.add_layout(camera_layout)
@@ -44,6 +49,9 @@ class MainFrame(Frame):
         self.set_theme("monochrome")
         self.fix()
         self.webcam = webcam
+        pros = Process(name="Background work", target=self.webcam.recording_utility, args=(val,))
+        pros.daemon = True
+        pros.start()
 
         logger._log_info("Mainframe initialized")
 
@@ -53,7 +61,15 @@ class MainFrame(Frame):
 
     def _start_stop_recording(self) -> None:
         """For the recording functionality"""
-        logger._log_info("Recording started/stopped")
+        if val.value == 1:
+            logger._log_info("Recording started inside if, value= " + str(val.value))
+            val.value = 0
+            # queue.put(self.webcam)
+            return None
+        else:
+            logger._log_info("Recording stopped inside else, value= " + str(val.value))
+            val.value = 1
+            return None
 
     @staticmethod
     def _gallery() -> None:
