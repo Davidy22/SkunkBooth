@@ -1,7 +1,10 @@
+import os
 from time import time
+from typing import Tuple
 
 from asciimatics.effects import Print
 from asciimatics.exceptions import ResizeScreenError, StopApplication
+from asciimatics.renderers import FigletText
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 
@@ -9,30 +12,57 @@ from asciiGen import Blocks
 from fileIO import VideoIO
 from filterManager import filterManager
 from frames import GalleryFrame, MainFrame
+from logger import CustomLogger
 from webcam import Webcam
 
+logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
+
+FIGLET_MAXHEIGHT = 8
 vid = VideoIO()
 screen = Screen.open(unicode_aware=True)
-last_scene = None
-converter = Blocks(
-    int(screen.height), int(screen.width), uni=True, fill_background=True
+
+logger._log_info(
+    "Screen initialized Height:{} Width:{}".format(screen.height, screen.width)
 )
+
+last_scene = None
 filters = filterManager()
 filters.load("Stars")
 filters.load("Invert")
-webcam_scale = 1.2
-webcam_height = int(screen.height / webcam_scale)
-webcam_width = int(screen.width / webcam_scale)
-webcam = Webcam(converter, filters, webcam_height, webcam_width)
-effects = []
-effects.append(MainFrame(screen, webcam))
-effects.append(
-    Print(
-        screen,
-        webcam,
-        y=screen.height - webcam_height >> 1,
-        x=screen.width - webcam_width >> 1,
+converter = Blocks(screen.height, screen.width, uni=True, fill_background=True)
+
+
+def CamDimensions(height: int, width: int) -> Tuple[int, int, int]:
+    """Calculate dimensions for vertical squeeze screen sizes"""
+    if width / height >= 4:
+        var_dim = int(height * 2)  # Max width is around twice height in most cases
+        offset = int(width / 2 - var_dim / 2 - width / 6)
+        return (height, var_dim, offset)
+    # Add margins of 1/6x,y if no vertical squeeze
+    height = int(height * 2 / 3)
+    width = int(width * 2 / 3)
+    return (height, width, 2)
+
+
+(webcam_height, webcam_width, offset) = CamDimensions(screen.height, screen.width)
+
+logger._log_info(
+    "Webcam Height:{} Webcam Width:{} Offset:{}".format(
+        webcam_height, webcam_width, offset
     )
+)
+
+webcam = Webcam(converter, webcam_height, webcam_width)
+
+effects = []
+header_figlet = Print(
+    screen, FigletText("Photobooth", width=screen.width), 0, colour=Screen.COLOUR_RED
+)
+effects.append(header_figlet)
+effects.append(MainFrame(screen, webcam))
+
+effects.append(
+    Print(screen, webcam, y=FIGLET_MAXHEIGHT + 3, x=int(screen.width / 6) + offset)
 )
 scenes = [
     Scene(effects, -1, name="Main"),
@@ -46,23 +76,27 @@ while True:
             screen.close()
             screen = Screen.open(unicode_aware=True)
             effects = []
+            effects.append(header_figlet)
+            (webcam_height, webcam_width, offset) = CamDimensions(
+                screen.height, screen.width
+            )
             webcam.resize(webcam_height, webcam_width)
-            converter.resize(int(screen.height), int(screen.width))
+            converter.resize(screen.height, screen.width)
+            effects.append(header_figlet)
             effects.append(MainFrame(screen, webcam))
-            webcam_height = int(screen.height / webcam_scale)
-            webcam_width = int(screen.width / webcam_scale)
             effects.append(
                 Print(
                     screen,
                     webcam,
-                    y=screen.height - webcam_height >> 1,
-                    x=screen.width - webcam_width >> 1,
+                    y=FIGLET_MAXHEIGHT + 3,
+                    x=int(screen.width / 6) + offset,
                 )
             )
             scenes = [
                 Scene(effects, -1, name="Main"),
                 Scene([GalleryFrame(screen)], -1, name="Gallery"),
             ]
+
             screen.set_scenes(scenes)
 
         screen.draw_next_frame()
