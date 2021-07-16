@@ -172,13 +172,3 @@ class FilterFrame(Frame):
                 self.filters.toggle(i[0].name)
         self.save()
         raise NextScene("Main")
-
-
-def ScreenWrapper(screen: Any, scene: Any) -> None:
-    """Add scenes to screen and display"""
-    scenes = [
-        Scene([MainFrame(screen)], -1, name="Main"),
-        Scene([GalleryFrame(screen)], -1, name="Gallery"),
-    ]
-
-    screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
