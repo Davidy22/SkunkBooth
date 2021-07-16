@@ -90,7 +90,7 @@ class GalleryFrame(Frame):
                                            has_border=False,
                                            can_scroll=False)
         self._back_camera_button = Button(u"🠔 Back to 📷", self._switch_to_camera, add_box=True)
-        self._browser = FileBrowser(screen.height//2, "data")
+        self._browser = FileBrowser(screen.height//2, "gallery/")
         title_layout = Layout([1])
         self.add_layout(title_layout)
         files_layout = Layout([100], fill_frame=True)
