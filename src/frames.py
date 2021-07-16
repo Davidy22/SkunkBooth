@@ -2,7 +2,9 @@ import os
 from datetime import datetime
 from typing import Any, Callable
 
+from asciimatics.effects import Effect, Print
 from asciimatics.exceptions import NextScene, StopApplication
+from asciimatics.renderers import Box, StaticRenderer
 from asciimatics.widgets import (
     Button, CheckBox, FileBrowser, Frame, Label, Layout
 )
@@ -12,21 +14,23 @@ from webcam import Webcam
 
 logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
 
+APP_TITLE = "Photobooth"
+
 
 class MainFrame(Frame):
     """Recreatable frame to implement main ui"""
 
-    def __init__(self, screen: Any, webcam: Webcam, toggle: Callable) -> None:
+    def __init__(self, screen: Any, webcam: Webcam, toggle: Callable, camera_effect: Effect) -> None:
         """Initialize frame"""
         super(MainFrame, self).__init__(
             screen,
-            int(screen.height // 10),
-            screen.width,
-            x=0,
-            y=7,  # depends on height occupied by figlet chosen
+            3,
+            screen.width-4,
+            x=2,
+            y=screen.height-4,
             hover_focus=True,
             can_scroll=False,
-            title="Photobooth",
+            title=APP_TITLE,
             has_border=False)
         # Made the labels below short so as to fit small screens
         self._gallery_button = Button(u"🖼 Gallery",
@@ -38,6 +42,21 @@ class MainFrame(Frame):
         self._camera_button = Button(u"📷 Shoot", self._shoot, add_box=True)
         self._video_recording = CheckBox(text=u"⏯︎ Record", on_change=toggle)
         self._quit_button = Button(u"🛑 Quit", self._quit, add_box=True)
+
+        box = Box(screen.width, screen.height, uni=True)
+        box_effect = Print(screen, box, y=0)
+        self.add_effect(box_effect)
+
+        title_effect = Print(
+            screen,
+            StaticRenderer(images=[APP_TITLE]),
+            y=1,
+            x=int(((screen.width-4)/2)-5),
+            attr=1
+        )
+        self.add_effect(title_effect)
+
+        self.add_effect(camera_effect)
 
         controls_layout = Layout([1, 1, 1, 1, 1])
         self.add_layout(controls_layout)
@@ -52,13 +71,13 @@ class MainFrame(Frame):
 
         logger._log_info("Mainframe initialized")
 
-    @staticmethod
+    @ staticmethod
     def _filters() -> None:
         """Open effects"""
         logger._log_info("Effects was clicked")
         raise NextScene("Filters")
 
-    @staticmethod
+    @ staticmethod
     def _gallery() -> None:
         """Open gallery"""
         logger._log_info("Gallery was clicked")
@@ -72,7 +91,7 @@ class MainFrame(Frame):
         self.webcam.take_picture_and_save(img_name)
         self._screen.refresh()
 
-    @staticmethod
+    @ staticmethod
     def _quit() -> None:
         """Quit application"""
         logger._log_info("Application was stopped")
@@ -86,13 +105,14 @@ class GalleryFrame(Frame):
         """Initialize frame"""
         super(GalleryFrame, self).__init__(
             screen,
-            screen.height - 6,
+            screen.height,
             screen.width,
-            y=6,  # depends on height occupied by figlet chosen
+            y=0,
             hover_focus=True,
-            has_border=False,
-            can_scroll=False)
-        self._back_camera_button = Button(u"🠔 Back to 📷",
+            has_border=True,
+            can_scroll=False,
+            title=APP_TITLE)
+        self._back_camera_button = Button(u"👈 Back to 📷",
                                           self._switch_to_camera,
                                           add_box=True)
         self._browser = FileBrowser(screen.height // 2, "gallery/")
@@ -111,7 +131,7 @@ class GalleryFrame(Frame):
 
         logger._log_info("Galleryframe initialized")
 
-    @staticmethod
+    @ staticmethod
     def _switch_to_camera() -> None:
         """Switch to Camera from Gallery"""
         logger._log_info("Switched to Camera from Gallery")
@@ -129,7 +149,7 @@ class FilterFrame(Frame):
             screen.width,
             hover_focus=True,
             can_scroll=True,
-            title="Photobooth",
+            title=APP_TITLE,
             data=data,
         )
         self._back_camera_button = Button("👈 Back to 📷",

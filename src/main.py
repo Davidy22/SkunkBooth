@@ -5,7 +5,6 @@ from typing import List, Tuple
 
 from asciimatics.effects import Print
 from asciimatics.exceptions import ResizeScreenError, StopApplication
-from asciimatics.renderers import FigletText
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 
@@ -25,14 +24,14 @@ if __name__ == "__main__":
         """Temp function for toggling video recording from inside screen"""
         flag[0] = not flag[0]
 
-    FIGLET_MAXHEIGHT = 8
+    TOP_MARGIN = 4
     vid = VideoIO()
     record = [True]
     toggleRecord = partial(toggleFlag, record)
     screen = Screen.open(unicode_aware=True)
 
     logger._log_info(
-        "Screen initialized Height:{} Width:{}".format(screen.height, screen.width)
+        "Screen initialized Height:{} Width:{}".format(screen.height-8, screen.width)
     )
 
     last_scene = None
@@ -42,6 +41,7 @@ if __name__ == "__main__":
     def CamDimensions(height: int, width: int) -> Tuple[int, int, int]:
         """Calculate dimensions for vertical squeeze screen sizes"""
         if width / height >= 4:
+            height -= 8
             var_dim = int(height * 2)  # Max width is around twice height in most cases
             offset = int(width / 2 - var_dim / 2 - width / 6)
             return (height, var_dim, offset)
@@ -61,18 +61,10 @@ if __name__ == "__main__":
     webcam = Webcam(converter, filters, webcam_height, webcam_width)
 
     effects = []
-    header_figlet = Print(
-        screen,
-        FigletText("Photobooth", width=screen.width),
-        0,
-        colour=Screen.COLOUR_RED,
-    )
-    effects.append(header_figlet)
-    effects.append(MainFrame(screen, webcam, toggleRecord))
+    camera_effect = Print(screen, webcam, y=TOP_MARGIN, x=int(
+        screen.width / 6) + offset, transparent=False)
+    effects.append(MainFrame(screen, webcam, toggleRecord, camera_effect))
 
-    effects.append(
-        Print(screen, webcam, y=FIGLET_MAXHEIGHT + 3, x=int(screen.width / 6) + offset)
-    )
     fFrame = FilterFrame(screen, filters)
     scenes = [
         Scene(effects, -1, name="Main"),
@@ -87,22 +79,14 @@ if __name__ == "__main__":
                 screen.close()
                 screen = Screen.open(unicode_aware=True)
                 effects = []
-                effects.append(header_figlet)
                 (webcam_height, webcam_width, offset) = CamDimensions(
                     screen.height, screen.width
                 )
                 webcam.resize(webcam_height, webcam_width)
                 converter.resize(screen.height, screen.width)
-                effects.append(header_figlet)
-                effects.append(MainFrame(screen, webcam, toggleRecord))
-                effects.append(
-                    Print(
-                        screen,
-                        webcam,
-                        y=FIGLET_MAXHEIGHT + 3,
-                        x=int(screen.width / 6) + offset,
-                    )
-                )
+                camera_effect = Print(screen, webcam, y=TOP_MARGIN, x=int(
+                    screen.width / 6) + offset)
+                effects.append(MainFrame(screen, webcam, toggleRecord, camera_effect))
                 fNext = FilterFrame(screen, filters, data=fFrame._data)
                 fFrame = fNext
                 scenes = [
