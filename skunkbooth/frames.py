@@ -9,8 +9,8 @@ from asciimatics.widgets import (
     Button, CheckBox, FileBrowser, Frame, Label, Layout
 )
 
-from logger import CustomLogger
-from webcam import Webcam
+from .logger import CustomLogger
+from .webcam import Webcam
 
 logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
 

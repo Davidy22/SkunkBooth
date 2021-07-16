@@ -5,7 +5,7 @@ import cv2 as cv
 import numpy as np
 from PIL import Image
 
-from logger import CustomLogger
+from .logger import CustomLogger
 
 
 class CamReader():

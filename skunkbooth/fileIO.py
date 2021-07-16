@@ -6,8 +6,8 @@ from cv2 import VideoWriter, VideoWriter_fourcc, imwrite
 from numpy import array
 from PIL import Image, ImageDraw, ImageFont
 
-from data import constants
-from logger import CustomLogger
+from .data import constants
+from .logger import CustomLogger
 
 
 class IOBase:

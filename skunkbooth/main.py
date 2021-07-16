@@ -8,12 +8,12 @@ from asciimatics.exceptions import ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 
-from asciiGen import Blocks
-from fileIO import VideoIO
-from filterManager import filterManager
-from frames import FilterFrame, GalleryFrame, MainFrame
-from logger import CustomLogger
-from webcam import Webcam
+from .asciiGen import Blocks
+from .fileIO import VideoIO
+from .filterManager import filterManager
+from .frames import FilterFrame, GalleryFrame, MainFrame
+from .logger import CustomLogger
+from .webcam import Webcam
 
 logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
 

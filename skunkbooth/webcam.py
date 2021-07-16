@@ -3,11 +3,11 @@ from typing import List, Tuple
 
 from asciimatics.renderers import DynamicRenderer
 
-from asciiGen import ASCIIGen
-from CamReader import CamReader
-from data.constants import palette8
-from fileIO import ImageIO
-from filterManager import filterManager
+from .asciiGen import ASCIIGen
+from .CamReader import CamReader
+from .data.constants import palette8
+from .fileIO import ImageIO
+from .filterManager import filterManager
 
 
 class Webcam(DynamicRenderer):
