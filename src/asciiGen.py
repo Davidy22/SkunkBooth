@@ -22,6 +22,11 @@ class ASCIIGen:
         """Return an ASCII image"""
         return []
 
+    def resize(self, height: int, width: int) -> None:
+        """Resize output"""
+        self.height = height
+        self.width = width
+
 
 class Blocks(ASCIIGen):
     """Render image to ASCII art drawn with colored ▄ or # characters"""
@@ -61,7 +66,7 @@ class Blocks(ASCIIGen):
                 image.size[0] * self.height * 2 // int(image.size[1]),
                 self.height << 1 if self.uni else self.height,
             ),
-            Image.BICUBIC,
+            Image.BILINEAR,
         )
         tmp_img = Image.new("P", (1, 1))
         tmp_img.putpalette(palette)
