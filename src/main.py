@@ -1,6 +1,7 @@
 import os
+from functools import partial
 from time import time
-from typing import Tuple
+from typing import List, Tuple
 
 from asciimatics.effects import Print
 from asciimatics.exceptions import ResizeScreenError, StopApplication
@@ -14,14 +15,20 @@ from filterManager import filterManager
 from frames import FilterFrame, GalleryFrame, MainFrame
 from logger import CustomLogger
 from webcam import Webcam
-from multiprocessing import freeze_support
 
 logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
 
 
-def RunMain():
+if __name__ == "__main__":
+
+    def toggleFlag(flag: List[int]) -> None:
+        """Temp function for toggling video recording from inside screen"""
+        flag[0] = not flag[0]
+
     FIGLET_MAXHEIGHT = 8
     vid = VideoIO()
+    record = [True]
+    toggleRecord = partial(toggleFlag, record)
     screen = Screen.open(unicode_aware=True)
 
     logger._log_info(
@@ -31,7 +38,6 @@ def RunMain():
     last_scene = None
     filters = filterManager()
     converter = Blocks(screen.height, screen.width, uni=True, fill_background=True)
-
 
     def CamDimensions(height: int, width: int) -> Tuple[int, int, int]:
         """Calculate dimensions for vertical squeeze screen sizes"""
@@ -43,7 +49,6 @@ def RunMain():
         height = int(height * 2 / 3)
         width = int(width * 2 / 3)
         return (height, width, 2)
-
 
     (webcam_height, webcam_width, offset) = CamDimensions(screen.height, screen.width)
 
@@ -57,10 +62,13 @@ def RunMain():
 
     effects = []
     header_figlet = Print(
-        screen, FigletText("Photobooth", width=screen.width), 0, colour=Screen.COLOUR_RED
+        screen,
+        FigletText("Photobooth", width=screen.width),
+        0,
+        colour=Screen.COLOUR_RED,
     )
     effects.append(header_figlet)
-    effects.append(MainFrame(screen, webcam))
+    effects.append(MainFrame(screen, webcam, toggleRecord))
 
     effects.append(
         Print(screen, webcam, y=FIGLET_MAXHEIGHT + 3, x=int(screen.width / 6) + offset)
@@ -69,7 +77,7 @@ def RunMain():
     scenes = [
         Scene(effects, -1, name="Main"),
         Scene([GalleryFrame(screen)], -1, name="Gallery"),
-        Scene([fFrame], -1, name="Filters")
+        Scene([fFrame], -1, name="Filters"),
     ]
     screen.set_scenes(scenes)
     b = a = 0
@@ -86,7 +94,7 @@ def RunMain():
                 webcam.resize(webcam_height, webcam_width)
                 converter.resize(screen.height, screen.width)
                 effects.append(header_figlet)
-                effects.append(MainFrame(screen, webcam))
+                effects.append(MainFrame(screen, webcam, toggleRecord))
                 effects.append(
                     Print(
                         screen,
@@ -106,6 +114,9 @@ def RunMain():
                 screen.set_scenes(scenes)
 
             screen.draw_next_frame()
+
+            if webcam.image is not None and record[0]:
+                vid.write(webcam.image)
             b = time()
             if b - a < 0.05:
                 pause = max(0, min(0.001, a + 0.001 - b))
@@ -120,7 +131,3 @@ def RunMain():
         except (StopApplication, KeyboardInterrupt):
             screen.close()
             quit(0)
-
-if __name__ == "__main__":
-    freeze_support()
-    RunMain()

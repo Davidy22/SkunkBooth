@@ -1,4 +1,3 @@
-from multiprocessing import Manager, Value
 from sys import platform
 from typing import List, Tuple
 
@@ -7,9 +6,8 @@ from asciimatics.renderers import DynamicRenderer
 from asciiGen import ASCIIGen
 from CamReader import CamReader
 from data.constants import palette8
-from fileIO import ImageIO, VideoIO
+from fileIO import ImageIO
 from filterManager import filterManager
-from logger import CustomLogger
 
 
 class Webcam(DynamicRenderer):
