@@ -14,7 +14,7 @@ from webcam import Webcam
 
 logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
 
-APP_TITLE = "Photobooth"
+APP_TITLE = "Skunkbooth"
 
 
 class MainFrame(Frame):
@@ -31,7 +31,8 @@ class MainFrame(Frame):
             hover_focus=True,
             can_scroll=False,
             title=APP_TITLE,
-            has_border=False)
+            has_border=False,
+            reduce_cpu=True)
         # Made the labels below short so as to fit small screens
         self._gallery_button = Button(u"🖼 Gallery",
                                       self._gallery,
@@ -111,7 +112,8 @@ class GalleryFrame(Frame):
             hover_focus=True,
             has_border=True,
             can_scroll=False,
-            title=APP_TITLE)
+            title=APP_TITLE,
+            reduce_cpu=True)
         self._back_camera_button = Button(u"👈 Back to 📷",
                                           self._switch_to_camera,
                                           add_box=True)
@@ -151,6 +153,7 @@ class FilterFrame(Frame):
             can_scroll=True,
             title=APP_TITLE,
             data=data,
+            reduce_cpu=True
         )
         self._back_camera_button = Button("👈 Back to 📷",
                                           self._switch_to_camera,

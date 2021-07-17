@@ -110,8 +110,6 @@ if __name__ == "__main__":
             a = b
         except ResizeScreenError as e:
             last_scene = e.scene
-            screen.close()
-            quit(0)
         except (StopApplication, KeyboardInterrupt):
             screen.close()
             quit(0)
