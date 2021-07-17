@@ -1,4 +1,4 @@
-- [Photobooth](#photobooth)
+- [Skunkbooth](#skunkbooth)
 - [Usage](#usage)
     - [Installation](#installation)
     - [Run](#run)
@@ -10,7 +10,7 @@
     - [Install dev deps](#install-dev-deps)
     - [Run the application](#run-the-application)
     - [Logs](#logs)
-# Photobooth
+# Skunkbooth
 
 A camera app in terminal. One more reason to stay inside terminal.
 
@@ -45,12 +45,12 @@ dir C:/Users/<username>/skunkbooth/pictures
 
 - macOS, Linux or WSL
 ```shell
-curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
 ```
 
 - Windows Powershell
 ```shell
-(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing).Content | python -
+(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py -UseBasicParsing).Content | python -
 ```
 
 ### Clone the repo
