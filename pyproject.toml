@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "skunkbooth"
+version = "0.1.0"
+description = "A camera app in terminal. One more reason to stay inside terminal."
+authors = [
+	"Davidy22",
+	"dhananjaylatkar",
+	"Trisanu-007",
+	"shriram1998",
+	"garuna-m6"
+	]
+license = "MIT"
+repository = "https://github.com/Davidy22/scholarlySkunkJam"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+asciimatics = "~=1.13"
+opencv-python = "~=4.5"
+
+[tool.poetry.dev-dependencies]
+flake8 = "~=3.7"
+isort = "~=5.9"
+pre-commit = "~=2.13.0"
+flake8-annotations = "~=2.0"
+flake8-bandit = "~=2.1"
+flake8-docstrings = "~=1.5"
+flake8-isort = "~=4.0"
+asciimatics = "~=1.13"
+opencv-python = "~=4.5"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+skunkbooth = "skunkbooth.main:main"

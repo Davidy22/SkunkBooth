@@ -1,4 +1,4 @@
-import os
+import logging
 from datetime import datetime
 from typing import Any, Callable
 
@@ -9,12 +9,11 @@ from asciimatics.widgets import (
     Button, CheckBox, FileBrowser, Frame, Label, Layout
 )
 
-from logger import CustomLogger
-from webcam import Webcam
+from skunkbooth.data.defaults import PIC_DIR
 
-logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
+from .webcam import Webcam
 
-APP_TITLE = "Photobooth"
+APP_TITLE = "Skunkbooth"
 
 
 class MainFrame(Frame):
@@ -31,7 +30,8 @@ class MainFrame(Frame):
             hover_focus=True,
             can_scroll=False,
             title=APP_TITLE,
-            has_border=False)
+            has_border=False,
+            reduce_cpu=True)
         # Made the labels below short so as to fit small screens
         self._gallery_button = Button(u"🖼 Gallery",
                                       self._gallery,
@@ -69,32 +69,33 @@ class MainFrame(Frame):
         self.fix()
         self.webcam = webcam
 
-        logger._log_info("Mainframe initialized")
+        logging.info("Mainframe initialized")
 
     @ staticmethod
     def _filters() -> None:
         """Open effects"""
-        logger._log_info("Effects was clicked")
+        logging.info("Effects was clicked")
         raise NextScene("Filters")
 
     @ staticmethod
     def _gallery() -> None:
         """Open gallery"""
-        logger._log_info("Gallery was clicked")
+        logging.info("Gallery was clicked")
         raise NextScene("Gallery")
 
     # @staticmethod
     def _shoot(self) -> None:
         """Take an image"""
-        logger._log_info("Camera was clicked")
-        img_name = f"gallery/Image-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.jpg"
+        logging.info("Camera was clicked")
+        img_name = f"{PIC_DIR}/Image-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.jpg"
+        logging.info(f"Saving image {img_name}")
         self.webcam.take_picture_and_save(img_name)
         self._screen.refresh()
 
     @ staticmethod
     def _quit() -> None:
         """Quit application"""
-        logger._log_info("Application was stopped")
+        logging.info("Application was stopped")
         raise StopApplication("User pressed quit")
 
 
@@ -111,11 +112,12 @@ class GalleryFrame(Frame):
             hover_focus=True,
             has_border=True,
             can_scroll=False,
-            title=APP_TITLE)
+            title=APP_TITLE,
+            reduce_cpu=True)
         self._back_camera_button = Button(u"👈 Back to 📷",
                                           self._switch_to_camera,
                                           add_box=True)
-        self._browser = FileBrowser(screen.height // 2, "gallery/")
+        self._browser = FileBrowser(screen.height // 2, PIC_DIR)
         title_layout = Layout([1])
         self.add_layout(title_layout)
         files_layout = Layout([100], fill_frame=True)
@@ -129,12 +131,12 @@ class GalleryFrame(Frame):
         self.set_theme("bright")
         self.fix()
 
-        logger._log_info("Galleryframe initialized")
+        logging.info("Galleryframe initialized")
 
     @ staticmethod
     def _switch_to_camera() -> None:
         """Switch to Camera from Gallery"""
-        logger._log_info("Switched to Camera from Gallery")
+        logging.info("Switched to Camera from Gallery")
         raise NextScene("Main")
 
 
@@ -151,6 +153,7 @@ class FilterFrame(Frame):
             can_scroll=True,
             title=APP_TITLE,
             data=data,
+            reduce_cpu=True
         )
         self._back_camera_button = Button("👈 Back to 📷",
                                           self._switch_to_camera,
@@ -169,7 +172,7 @@ class FilterFrame(Frame):
         for f in self.filterList:
             temp = CheckBox(f[0].name, name=f[0].name)
             f[1] = temp
-            logger._log_info(f"{f[0].name} button created")
+            logging.info(f"{f[0].name} button created")
             filters_layout.add_widget(temp)
 
         controls_layout = Layout([1, 1, 1])
@@ -179,13 +182,13 @@ class FilterFrame(Frame):
         self.set_theme("bright")
         self.fix()
 
-        logger._log_info("Galleryframe initialized")
+        logging.info("Galleryframe initialized")
 
     def _switch_to_camera(self) -> None:
         """Switch to Camera from Filters"""
-        logger._log_info("Switched to Camera from Filters")
+        logging.info("Switched to Camera from Filters")
         for i in self.filterList:
-            logger._log_info(
+            logging.info(
                 f"{i[0]}, {self.filters.is_loaded(i[0])}, {i[1].value}")
             if self.filters.is_loaded(i[0].name) != i[1].value:
                 self.filters.toggle(i[0].name)

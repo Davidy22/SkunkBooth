@@ -23,8 +23,11 @@ class filterManager:
 
     def __init__(self):
         sys.path.extend(abspath("filters"))
-        modules = glob(join(dirname(__file__), "filters", "*.py"))
-        f = [import_module(f"filters.{basename(f)[:-3]}").filter() for f in modules]
+        modules = glob(join(dirname(__file__), "..", "filters", "*.py"))
+        f = [
+            import_module(f"skunkbooth.filters.{basename(f)[:-3]}").filter()
+            for f in modules if "__init__.py" not in f
+        ]
         self.pil, self.ascii = {}, {}
         for i in f:
             (self.pil, self.ascii)[i.textOp][i.name] = i
