@@ -155,7 +155,7 @@ class GalleryFrame(Frame):
         logging.info("File browser opened")
         self.files_layout.clear_widgets()
         self._browser = FileBrowser(
-            self.screen.height // 2,
+            self.screen.height-8,
             PIC_DIR,
             on_select=self._open_image
         )
