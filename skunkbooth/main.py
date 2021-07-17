@@ -111,8 +111,9 @@ def main() -> None:
                 fFrame = fNext
                 scenes = [
                     Scene(effects, -1, name="Main"),
-                    Scene([GalleryFrame(screen)], -1, name="Gallery"),
+                    Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
                     Scene([fFrame], -1, name="Filters"),
+                    Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
                 ]
 
                 screen.set_scenes(scenes)
