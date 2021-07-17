@@ -106,7 +106,8 @@ def main() -> None:
                 converter.resize(screen.height, screen.width)
                 camera_effect = Print(screen, webcam, y=TOP_MARGIN - 1, x=int(
                     screen.width / 6) + offset)
-                effects.append(MainFrame(screen, webcam, toggleRecord, camera_effect))
+                record = [True]
+                effects.append(MainFrame(screen, webcam, partial(toggleFlag, record), camera_effect))
                 fNext = FilterFrame(screen, filters, data=fFrame._data)
                 fFrame = fNext
                 scenes = [
