@@ -157,16 +157,19 @@ class GalleryFrame(Frame):
         self._browser = FileBrowser(
             self.screen.height // 2,
             PIC_DIR,
-            on_select=self._open_image,
-            file_filter=".*.jpg$")
+            on_select=self._open_image
+        )
         self.files_layout.add_widget(self._browser)
         self.fix()
 
     def _open_image(self) -> None:
         """Opening image preview"""
-        logging.info(f"Image selected in gallery :{self._browser.value}")
-        self._model.set_path(self._browser.value)
-        raise NextScene("Preview")
+        if(self._browser.value.endswith('.jpg')):
+            logging.info(f"Image selected in gallery :{self._browser.value}")
+            self._model.set_path(self._browser.value)
+            raise NextScene("Preview")
+        else:
+            pass
 
     @ staticmethod
     def _switch_to_camera() -> None:
