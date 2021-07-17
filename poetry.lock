@@ -418,8 +418,8 @@ python-versions = "*"
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
-content-hash = "00cb044a20c7bcd3aaf58bde3f612ea2891c32450e86aaf1e260c7a9f9915374"
+python-versions = "^3.8"
+content-hash = "13effd24aad3db9b0d15c5785e0d0ed6f44eeb1b76cecf5cd7e45b9dc240ebb2"
 
 [metadata.files]
 asciimatics = [
