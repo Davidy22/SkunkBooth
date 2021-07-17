@@ -42,8 +42,8 @@ if __name__ == "__main__":
         """Calculate dimensions for vertical squeeze screen sizes"""
         if width / height >= 4:
             height -= 8
-            var_dim = int(height * 2)  # Max width is around twice height in most cases
-            offset = int(width / 2 - var_dim / 2 - width / 6)
+            var_dim = int(height * 4)  # Max width is around twice height in most cases
+            offset = int(width / 2 - var_dim / 2.5 - width / 5)
             return (height, var_dim, offset)
         # Add margins of 1/6x,y if no vertical squeeze
         height = int(height * 2 / 3)
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     webcam = Webcam(converter, filters, webcam_height, webcam_width)
 
     effects = []
-    camera_effect = Print(screen, webcam, y=TOP_MARGIN, x=int(
+    camera_effect = Print(screen, webcam, y=TOP_MARGIN - 1, x=int(
         screen.width / 6) + offset, transparent=False)
     effects.append(MainFrame(screen, webcam, toggleRecord, camera_effect))
 
@@ -84,7 +84,7 @@ if __name__ == "__main__":
                 )
                 webcam.resize(webcam_height, webcam_width)
                 converter.resize(screen.height, screen.width)
-                camera_effect = Print(screen, webcam, y=TOP_MARGIN, x=int(
+                camera_effect = Print(screen, webcam, y=TOP_MARGIN - 1, x=int(
                     screen.width / 6) + offset)
                 effects.append(MainFrame(screen, webcam, toggleRecord, camera_effect))
                 fNext = FilterFrame(screen, filters, data=fFrame._data)
