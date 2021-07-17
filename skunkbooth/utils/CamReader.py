@@ -1,11 +1,9 @@
-import os
+import logging
 from time import sleep
 
 import cv2 as cv
 import numpy as np
 from PIL import Image
-
-from .logger import CustomLogger
 
 
 class CamReader():
@@ -21,7 +19,7 @@ class CamReader():
         # Since a hardware can be only accessible via one user, I/O limitation
         cap = cv.VideoCapture(0)
         if not cap.isOpened():
-            CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")._log_error("Cannot open camera")
+            logging.error("Cannot open camera")
             return None
 
         sleep(1)
@@ -45,9 +43,7 @@ class CamReader():
 
         # if frame is read correctly ret is True
         if not ret:
-            CustomLogger(
-                fileoutpath="Logs" + os.sep + "ui.log"
-            )._log_error("Can't receive frame (stream end?). Exiting ...")
+            logging.error("Can't receive frame (stream end?). Exiting ...")
             self.close_camera()
             exit(1)
 

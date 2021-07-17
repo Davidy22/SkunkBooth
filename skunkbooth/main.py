@@ -1,4 +1,5 @@
-import os
+import logging
+from datetime import datetime
 from functools import partial
 from time import time
 from typing import List, Tuple
@@ -8,29 +9,40 @@ from asciimatics.exceptions import ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 
+from skunkbooth.data.defaults import LOG_FILE, PIC_DIR
 from skunkbooth.utils.asciiGen import Blocks
 from skunkbooth.utils.fileIO import VideoIO
 from skunkbooth.utils.filterManager import filterManager
 from skunkbooth.utils.frames import FilterFrame, GalleryFrame, MainFrame
-from skunkbooth.utils.logger import CustomLogger
 from skunkbooth.utils.webcam import Webcam
 
-logger = CustomLogger(fileoutpath="Logs" + os.sep + "ui.log")
-
+# Initialize logger
+logging.basicConfig(
+    filename=LOG_FILE,
+    filemode="w",
+    level=logging.DEBUG,
+    format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
+)
 
 if __name__ == "__main__":
+    vid = VideoIO()
 
     def toggleFlag(flag: List[int]) -> None:
         """Temp function for toggling video recording from inside screen"""
         flag[0] = not flag[0]
+        # re-initialize VideoIO for new file name
+        global vid
+        vid.close()
+        VID_FILE = f"{PIC_DIR}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
+        logging.info(f"Recording new video - {VID_FILE}")
+        vid = VideoIO(dest=VID_FILE)
 
     TOP_MARGIN = 4
-    vid = VideoIO()
     record = [True]
     toggleRecord = partial(toggleFlag, record)
     screen = Screen.open(unicode_aware=True)
 
-    logger._log_info(
+    logging.info(
         "Screen initialized Height:{} Width:{}".format(screen.height-8, screen.width)
     )
 
@@ -52,7 +64,7 @@ if __name__ == "__main__":
 
     (webcam_height, webcam_width, offset) = CamDimensions(screen.height, screen.width)
 
-    logger._log_info(
+    logging.info(
         "Webcam Height:{} Webcam Width:{} Offset:{}".format(
             webcam_height, webcam_width, offset
         )

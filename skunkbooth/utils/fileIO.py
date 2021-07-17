@@ -1,3 +1,4 @@
+import logging
 from os import path
 from sys import platform
 from typing import List, Tuple
@@ -7,8 +8,6 @@ from numpy import array
 from PIL import Image, ImageDraw, ImageFont
 
 from skunkbooth.data import constants
-
-from .logger import CustomLogger
 
 
 class IOBase:
@@ -25,7 +24,7 @@ class IOBase:
         try:
             self.font = ImageFont.truetype(fp, size)
         except OSError:
-            CustomLogger._log_error(f"Font {fp} not found, falling back.")
+            logging.error(f"Font {fp} not found, falling back.")
             fp = f'{path.join(path.dirname(path.abspath(__file__)), "..", "data", "Hack.ttf")}'
             self.font = ImageFont.truetype(fp, size)
 
