@@ -20,7 +20,7 @@ from skunkbooth.utils.webcam import Webcam
 logging.basicConfig(
     filename=LOG_FILE,
     filemode="w",
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
 )
 vid = VideoIO()
@@ -32,11 +32,14 @@ def main() -> None:
         """Temp function for toggling video recording from inside screen"""
         flag[0] = not flag[0]
         # re-initialize VideoIO for new file name
-        global vid
-        vid.close()
-        VID_FILE = f"{PIC_DIR}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
-        logging.info(f"Recording new video - {VID_FILE}")
-        vid = VideoIO(dest=VID_FILE)
+        if flag[0]:
+            global vid
+            vid.close()
+            VID_FILE = f"{PIC_DIR}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
+            logging.info(f"Recording new video - {VID_FILE}")
+            vid = VideoIO(dest=VID_FILE)
+        else:
+            logging.info("Recording stopped.")
 
     TOP_MARGIN = 4
     record = [True]
