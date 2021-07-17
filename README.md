@@ -35,7 +35,7 @@ ls ~/skunkbooth/pictures
 
 - Windows
 ```shell
-ls C:/Users/<username>/skunkbooth/pictures
+dir C:/Users/<username>/skunkbooth/pictures
 ```
 
 # Contributing
@@ -82,5 +82,5 @@ ls ~/skunkbooth/.logs
 
 - Windows
 ```shell
-ls C:/Users/<username>/skunkbooth/.logs
+dir C:/Users/<username>/skunkbooth/.logs
 ```
