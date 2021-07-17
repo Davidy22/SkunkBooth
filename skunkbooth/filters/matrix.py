@@ -13,7 +13,7 @@ class filter:
         name will be the name of the filter to be used for display/indexing
         """
         self.textOp = True
-        self.name = "Matrix"
+        self.name = "The Matrix"
 
     def load(self) -> None:
         """Load environment variables to be used in the filter operation"""

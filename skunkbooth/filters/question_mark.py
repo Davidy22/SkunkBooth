@@ -28,5 +28,5 @@ class filter:
     ) -> List[List[Tuple[int, int, int, int]]]:
         """Process an ASCII image and return an image of the same format and dims"""
         return [
-            [("?" if randint(0, 50) else "*", j[1], j[2], 0) for j in i] for i in image
+            [("?" if randint(0, 50) else "?", j[1], j[2], 0) for j in i] for i in image
         ]
