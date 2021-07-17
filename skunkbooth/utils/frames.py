@@ -4,7 +4,7 @@ from typing import Any, Callable
 
 from asciimatics.effects import Effect, Print
 from asciimatics.exceptions import NextScene, StopApplication
-from asciimatics.renderers import Box, StaticRenderer
+from asciimatics.renderers import Box, ColourImageFile, StaticRenderer
 from asciimatics.widgets import (
     Button, CheckBox, FileBrowser, Frame, Label, Layout
 )
@@ -14,6 +14,22 @@ from skunkbooth.data.defaults import PIC_DIR
 from .webcam import Webcam
 
 APP_TITLE = "Skunkbooth"
+
+
+class ImageSelectionModel(object):
+    """Model to hold selected image path"""
+
+    def __init__(self, path: str = "") -> None:
+        """Initialize model"""
+        self._path = path
+
+    def set_path(self, path: str) -> None:
+        """Setter"""
+        self._path = path
+
+    def get_path(self) -> str:
+        """Getter"""
+        return self._path
 
 
 class MainFrame(Frame):
@@ -49,8 +65,9 @@ class MainFrame(Frame):
 
         title_effect = Print(
             screen,
-            StaticRenderer(images=[APP_TITLE]),
-            y=1,
+            StaticRenderer(images=[" "+APP_TITLE+" "]),
+            y=0,
+            transparent=False,
             x=int(((screen.width-4)/2)-5),
             attr=1
         )
@@ -102,7 +119,7 @@ class MainFrame(Frame):
 class GalleryFrame(Frame):
     """Recreatable frame to implement gallery ui"""
 
-    def __init__(self, screen: Any) -> None:
+    def __init__(self, screen: Any, model: ImageSelectionModel) -> None:
         """Initialize frame"""
         super(GalleryFrame, self).__init__(
             screen,
@@ -112,26 +129,47 @@ class GalleryFrame(Frame):
             hover_focus=True,
             has_border=True,
             can_scroll=False,
+            on_load=self._render_browser,
             title=APP_TITLE,
             reduce_cpu=True)
+        self._model = model
         self._back_camera_button = Button(u"👈 Back to 📷",
                                           self._switch_to_camera,
                                           add_box=True)
-        self._browser = FileBrowser(screen.height // 2, PIC_DIR)
+
         title_layout = Layout([1])
         self.add_layout(title_layout)
-        files_layout = Layout([100], fill_frame=True)
-        self.add_layout(files_layout)
+        self.files_layout = Layout([100], fill_frame=True)
+        self.add_layout(self.files_layout)
         controls_layout = Layout([1, 1, 1])
         self.add_layout(controls_layout)
         title_layout.add_widget(
             Label("Gallery", align="^", height=screen.height // 16))
-        files_layout.add_widget(self._browser)
         controls_layout.add_widget(self._back_camera_button, 1)
         self.set_theme("bright")
-        self.fix()
 
         logging.info("Galleryframe initialized")
+
+    def _render_browser(self) -> None:
+        """Open file browser"""
+        logging.info("File browser opened")
+        self.files_layout.clear_widgets()
+        self._browser = FileBrowser(
+            self.screen.height-8,
+            PIC_DIR,
+            on_select=self._open_image
+        )
+        self.files_layout.add_widget(self._browser)
+        self.fix()
+
+    def _open_image(self) -> None:
+        """Opening image preview"""
+        if(self._browser.value.endswith('.jpg')):
+            logging.info(f"Image selected in gallery :{self._browser.value}")
+            self._model.set_path(self._browser.value)
+            raise NextScene("Preview")
+        else:
+            pass
 
     @ staticmethod
     def _switch_to_camera() -> None:
@@ -194,3 +232,79 @@ class FilterFrame(Frame):
                 self.filters.toggle(i[0].name)
         self.save()
         raise NextScene("Main")
+
+
+class PreviewFrame(Frame):
+    """Recreatable frame to implement preview ui"""
+
+    def __init__(self, screen: Any, model: ImageSelectionModel) -> None:
+        """Initialize frame"""
+        super(PreviewFrame, self).__init__(
+            screen,
+            3,
+            screen.width-4,
+            x=2,
+            y=screen.height-4,
+            on_load=self._render_image,
+            hover_focus=True,
+            has_border=False,
+            can_scroll=False,
+            title=APP_TITLE,
+            reduce_cpu=True)
+        self._model = model
+        self._back_gallery_button = Button(u"👈 Back to 🖼",
+                                           self._switch_to_gallery,
+                                           add_box=True)
+        box = Box(screen.width, screen.height, uni=True)
+        box_effect = Print(screen, box, y=0)
+        self.add_effect(box_effect)
+
+        title_effect = Print(
+            screen,
+            StaticRenderer(images=[" "+APP_TITLE+" "]),
+            y=0,
+            x=int(((screen.width-4)/2)-5),
+            attr=1,
+            transparent=False
+        )
+        self.add_effect(title_effect)
+
+        header_effect = Print(
+            screen,
+            StaticRenderer(images=["Photo Preview"]),
+            y=1,
+            x=int(((screen.width-4)/2)-5),
+            attr=1,
+            colour=2,  # GreenColor
+            transparent=False
+        )
+        self.add_effect(header_effect)
+
+        controls_layout = Layout([1, 1, 1])
+        self.add_layout(controls_layout)
+        controls_layout.add_widget(self._back_gallery_button, 1)
+        self.set_theme("bright")
+        self.fix()
+
+        logging.info("Previewframe initialized")
+
+    def _render_image(self) -> None:
+        """Open selected image"""
+        logging.info(f"Image opened in preview {self._model.get_path()}")
+        preview_effect = Print(
+            self.screen,
+            ColourImageFile(
+                self.screen,
+                self._model.get_path(),
+                height=self.screen.height-8,
+                uni=True),
+            y=4,
+            speed=0,
+            transparent=False)
+        self.add_effect(preview_effect)
+
+    @ staticmethod
+    def _switch_to_gallery() -> None:
+        """Switch to Gallery from Preview"""
+        logging.info("Switched to Gallery from Preview")
+        raise NextScene("Gallery")

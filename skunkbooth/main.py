@@ -13,7 +13,9 @@ from skunkbooth.data.defaults import LOG_FILE, PIC_DIR
 from skunkbooth.utils.asciiGen import Blocks
 from skunkbooth.utils.fileIO import VideoIO
 from skunkbooth.utils.filterManager import filterManager
-from skunkbooth.utils.frames import FilterFrame, GalleryFrame, MainFrame
+from skunkbooth.utils.frames import (
+    FilterFrame, GalleryFrame, ImageSelectionModel, MainFrame, PreviewFrame
+)
 from skunkbooth.utils.webcam import Webcam
 
 # Initialize logger
@@ -42,6 +44,7 @@ def main() -> None:
             logging.info("Recording stopped.")
 
     TOP_MARGIN = 4
+    image_selection = ImageSelectionModel()
     record = [True]
     toggleRecord = partial(toggleFlag, record)
     screen = Screen.open(unicode_aware=True)
@@ -84,8 +87,9 @@ def main() -> None:
     fFrame = FilterFrame(screen, filters)
     scenes = [
         Scene(effects, -1, name="Main"),
-        Scene([GalleryFrame(screen)], -1, name="Gallery"),
+        Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
         Scene([fFrame], -1, name="Filters"),
+        Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
     ]
     screen.set_scenes(scenes)
     b = a = 0
