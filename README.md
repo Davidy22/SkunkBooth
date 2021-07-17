@@ -34,8 +34,8 @@ ls ~/skunkbooth/pictures
 ```
 
 - Windows
-```shell
-dir C:/Users/<username>/skunkbooth/pictures
+```powershell
+dir C:\Users\<username>\skunkbooth\pictures
 ```
 
 # Contributing
@@ -81,6 +81,6 @@ ls ~/skunkbooth/.logs
 ```
 
 - Windows
-```shell
-dir C:/Users/<username>/skunkbooth/.logs
+```powershell
+dir C:\Users\<username>\skunkbooth\.logs
 ```
