@@ -23,10 +23,11 @@ logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
 )
+vid = VideoIO()
 
-if __name__ == "__main__":
-    vid = VideoIO()
 
+def main() -> None:
+    """Main driver function"""
     def toggleFlag(flag: List[int]) -> None:
         """Temp function for toggling video recording from inside screen"""
         flag[0] = not flag[0]
@@ -46,7 +47,7 @@ if __name__ == "__main__":
         "Screen initialized Height:{} Width:{}".format(screen.height-8, screen.width)
     )
 
-    last_scene = None
+    # last_scene = None
     filters = filterManager()
     converter = Blocks(screen.height, screen.width, uni=True, fill_background=True)
 
@@ -120,8 +121,14 @@ if __name__ == "__main__":
             else:
                 screen.wait_for_input(0)
             a = b
-        except ResizeScreenError as e:
-            last_scene = e.scene
+        except ResizeScreenError:
+            logging.info("Resizing screen")
+            # last_scene = e.scene
         except (StopApplication, KeyboardInterrupt):
+            logging.info("Stopping application")
             screen.close()
             quit(0)
+
+
+if __name__ == "__main__":
+    main()
