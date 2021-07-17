@@ -1,46 +1,47 @@
 - [Photobooth](#photobooth)
 - [Usage](#usage)
-      - [Installation](#installation)
-      - [Run](#run)
-      - [Media location](#media-location)
+    - [Installation](#installation)
+    - [Run](#run)
+    - [Media location](#media-location)
 - [Contributing](#contributing)
-      - [Install Poetry](#install-poetry)
-      - [Clone the repo](#clone-the-repo)
-      - [Activate poetry shell](#activate-poetry-shell)
-      - [Install dev deps](#install-dev-deps)
-      - [Run the application](#run-the-application)
+    - [Install Poetry](#install-poetry)
+    - [Clone the repo](#clone-the-repo)
+    - [Activate poetry shell](#activate-poetry-shell)
+    - [Install dev deps](#install-dev-deps)
+    - [Run the application](#run-the-application)
+    - [Logs](#logs)
 # Photobooth
 
 A camera app in terminal. One more reason to stay inside terminal.
 
 # Usage
-#### Installation
+### Installation
 ```shell
 pip install skunkbooth
 ```
 
-#### Run
+### Run
 After installation, use `skunkbooth` command to launch camera.
 
 ```shell
 skunkbooth
 ```
-#### Media location
+### Media location
 
 - macOS and Linux
 ```shell
-cd ~/Pictures/skunkbooth
+ls ~/skunkbooth/pictures
 ```
 
 - Windows
 ```shell
-TBD
+ls C:/Users/<username>/skunkbooth/pictures
 ```
 
 # Contributing
 [Poetry](https://python-poetry.org/) is used for package management.
 
-#### Install Poetry
+### Install Poetry
 
 - macOS, Linux or WSL
 ```shell
@@ -52,22 +53,34 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 (Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing).Content | python -
 ```
 
-#### Clone the repo
+### Clone the repo
 ```shell
 git clone https://github.com/Davidy22/scholarlySkunkJam.git
 cd scholarlySkunkJam
 ```
-#### Activate poetry shell
+### Activate poetry shell
 ```shell
 poetry shell
 ```
 
-#### Install dev deps
+### Install dev deps
 ```shell
 poetry install
 ```
 
-#### Run the application
+### Run the application
 ```shell
 python3 -m skunkbooth.main
+```
+
+### Logs
+Logs are located in `skunkbooth` folder.
+- macOS and Linux
+```shell
+ls ~/skunkbooth/.logs
+```
+
+- Windows
+```shell
+ls C:/Users/<username>/skunkbooth/.logs
 ```
