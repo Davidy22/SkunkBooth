@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "skunkbooth"
-version = "0.1.0"
+version = "0.1.1"
 description = "A camera app in terminal. One more reason to stay inside terminal."
 authors = [
 	"Davidy22, dhananjaylatkar, Trisanu-007, shriram1998 and garuna-m6"
