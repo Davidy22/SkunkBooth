@@ -1,6 +1,9 @@
-![Image of skukbooth logo](Images/img_with_text.png)
+<!-- ![Image of skukbooth logo](Images/img_with_text.png) -->
+<div align="center">
+   <img src="Images/img_with_text.png" alt="Logo of this" width="500" height="500">
+</div>
 
-[![GitHub issues](https://img.shields.io/github/issues/Davidy22/scholarlySkunkJam?style=for-the-badge)](https://github.com/Davidy22/scholarlySkunkJam/issues) [![GitHub forks](https://img.shields.io/github/forks/Davidy22/scholarlySkunkJam?style=for-the-badge)](https://github.com/Davidy22/scholarlySkunkJam/network)  [![GitHub stars](https://img.shields.io/github/stars/Davidy22/scholarlySkunkJam?style=for-the-badge)](https://github.com/Davidy22/scholarlySkunkJam/stargazers) [![PyPI](https://img.shields.io/badge/PyPI-GO%20HERE-yellow?style=for-the-badge&logo=pypi)](https://pypi.org/project/skunkbooth/) [![Python](https://img.shields.io/badge/Python-TRUE-brightgreen?style=for-the-badge&logo=python)](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwimlcXOwPHxAhXt4nMBHR1LDBUQFjAAegQICxAD&url=https%3A%2F%2Fwww.python.org%2F&usg=AOvVaw0QREvGsjwHKp2GtoYvs1JH)
+[![GitHub issues](https://img.shields.io/github/issues/Davidy22/scholarlySkunkJam?style=for-the-badge)](https://github.com/Davidy22/scholarlySkunkJam/issues) &nbsp;&nbsp; [![GitHub forks](https://img.shields.io/github/forks/Davidy22/scholarlySkunkJam?style=for-the-badge)](https://github.com/Davidy22/scholarlySkunkJam/network) &nbsp;&nbsp; [![GitHub stars](https://img.shields.io/github/stars/Davidy22/scholarlySkunkJam?style=for-the-badge)](https://github.com/Davidy22/scholarlySkunkJam/stargazers)&nbsp;&nbsp; [![PyPI](https://img.shields.io/badge/PyPI-GO%20HERE-yellow?style=for-the-badge&logo=pypi)](https://pypi.org/project/skunkbooth/) &nbsp;&nbsp; [![Python](https://img.shields.io/badge/Python-TRUE-brightgreen?style=for-the-badge&logo=python)](https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwimlcXOwPHxAhXt4nMBHR1LDBUQFjAAegQICxAD&url=https%3A%2F%2Fwww.python.org%2F&usg=AOvVaw0QREvGsjwHKp2GtoYvs1JH)
 
 # Index
 - [Skunkbooth](#skunkbooth)
