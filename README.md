@@ -28,8 +28,11 @@
 A camera app in terminal. One more reason to stay inside the box you call terminal.
 
 ### Why
-With our revolutionary application, you don’t have to leave your terminal and climb a mountain, just to get your next perfect Instagram picture. 
-Open terminal, run `skunkbooth` and capture funkiest images *inside* the box (aka terminal).
+With our revolutionary application, you don't have to climb a mountain simply to get your next perfect Instagram pic.
+Open terminal, run `skunkbooth` and capture funkiest image *inside the box*.
+
+Don't leave your termial just to capture an image. You can now capture funky images
+straight from your beloved *box* (aka termial).
 
 We support all the modern operating systems. All you need is `python3`.
 
