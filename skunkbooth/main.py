@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from functools import partial
+from multiprocessing import Process, Queue
 from time import time
 from typing import List, Tuple
 
@@ -11,11 +12,11 @@ from asciimatics.screen import Screen
 
 from skunkbooth.data.defaults import LOG_FILE, PIC_DIR
 from skunkbooth.utils.asciiGen import Blocks
-from skunkbooth.utils.fileIO import VideoIO
 from skunkbooth.utils.filterManager import filterManager
 from skunkbooth.utils.frames import (
     FilterFrame, GalleryFrame, ImageSelectionModel, MainFrame, PreviewFrame
 )
+from skunkbooth.utils.videoManager import videoManager
 from skunkbooth.utils.webcam import Webcam
 
 # Initialize logger
@@ -25,21 +26,22 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
 )
-vid = VideoIO()
 
 
 def main() -> None:
     """Main driver function"""
+    vidBuf = Queue(99999)
+    vid = Process(target=videoManager, args=[vidBuf])
+    vid.start()
+
     def toggleFlag(flag: List[int]) -> None:
         """Temp function for toggling video recording from inside screen"""
         flag[0] = not flag[0]
         # re-initialize VideoIO for new file name
         if flag[0]:
-            global vid
-            vid.close()
             VID_FILE = f"{PIC_DIR}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
             logging.info(f"Recording new video - {VID_FILE}")
-            vid = VideoIO(dest=VID_FILE)
+            vidBuf.put(VID_FILE)
         else:
             logging.info("Recording stopped.")
 
@@ -122,7 +124,7 @@ def main() -> None:
             screen.draw_next_frame()
 
             if webcam.image is not None and record[0]:
-                vid.write(webcam.image)
+                vidBuf.put(webcam.image)
             b = time()
             if b - a < 0.05:
                 pause = max(0, min(0.001, a + 0.001 - b))
@@ -134,8 +136,12 @@ def main() -> None:
             logging.info("Resizing screen")
             # last_scene = e.scene
         except (StopApplication, KeyboardInterrupt):
+            vidBuf.put(None)
             logging.info("Stopping application")
             screen.close()
+            if not vidBuf.empty():  # TODO: Make this nicer than a print statement
+                print("Saving video...")
+            vid.join()
             quit(0)
 
 
