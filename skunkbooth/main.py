@@ -131,7 +131,21 @@ def main() -> None:
                     Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
                 ]
 
-                screen.set_scenes(scenes)
+                screen.set_scenes(scenes, unhandled_input=global_shortcuts)
+
+            if screen.current_scene == scenes[2]:
+                event = screen.get_event()
+                if isinstance(event, KeyboardEvent):
+                    c = event.key_code
+                    layout = fFrame._layouts[1]
+                    if c == screen.KEY_HOME:
+                        fFrame.switch_focus(layout, 0, 0)
+                    elif c == screen.KEY_END:
+                        fFrame.switch_focus(layout, 0, len(fFrame.filterList)-1)
+                    elif c == screen.KEY_PAGE_UP:
+                        fFrame.process_event(KeyboardEvent(screen.KEY_UP))
+                    elif c == screen.KEY_PAGE_DOWN:
+                        fFrame.process_event(KeyboardEvent(screen.KEY_DOWN))
 
             screen.draw_next_frame()
 
