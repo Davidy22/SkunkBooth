@@ -30,7 +30,7 @@ logging.basicConfig(
 
 def main() -> None:
     """Main driver function"""
-    vidBuf = Queue(99999)
+    vidBuf = Queue(32767)
     vid = Process(target=videoManager, args=[vidBuf])
     vid.start()
 
@@ -140,6 +140,7 @@ def main() -> None:
             logging.info("Stopping application")
             screen.close()
             if not vidBuf.empty():  # TODO: Make this nicer than a print statement
+                logging.info("Program stopped, saving remaining video")
                 print("Saving video...")
             vid.join()
             quit(0)
