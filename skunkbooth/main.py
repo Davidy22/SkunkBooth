@@ -6,6 +6,7 @@ from time import time
 from typing import List, Tuple
 
 from asciimatics.effects import Print
+from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
@@ -26,6 +27,17 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
 )
+
+
+def global_shortcuts(event):
+    """Event handler for global shortcuts"""
+    ctrlQCode = 17
+    ctrlWCode = 23
+    if isinstance(event, KeyboardEvent):
+        c = event.key_code
+        # Stop on q, esc, ctrl+q and ctrl+w
+        if c in (Screen.KEY_ESCAPE, ord('q'), ctrlQCode, ctrlWCode):
+            raise StopApplication("User pressed quit")
 
 
 def main() -> None:
@@ -93,7 +105,7 @@ def main() -> None:
         Scene([fFrame], -1, name="Filters"),
         Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
     ]
-    screen.set_scenes(scenes)
+    screen.set_scenes(scenes, unhandled_input=global_shortcuts)
     b = a = 0
     while True:
         try:
