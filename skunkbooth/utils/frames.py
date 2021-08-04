@@ -3,8 +3,10 @@ from datetime import datetime
 from typing import Any, Callable
 
 from asciimatics.effects import Effect, Print
+from asciimatics.event import Event, KeyboardEvent
 from asciimatics.exceptions import NextScene, StopApplication
 from asciimatics.renderers import Box, ColourImageFile, StaticRenderer
+from asciimatics.screen import Screen
 from asciimatics.widgets import (
     Button, CheckBox, FileBrowser, Frame, Label, Layout
 )
@@ -232,6 +234,25 @@ class FilterFrame(Frame):
                 self.filters.toggle(i[0].name)
         self.save()
         raise NextScene("Main")
+
+    def _skip_to_next_page(self) -> None:
+        """Function to skip to next page of filters"""
+        pass
+
+    def process_event(self, event: Event) -> None:
+        """Deals with keyboard events that happen in this screen"""
+        super(FilterFrame, self).process_event(event)
+        if isinstance(event, KeyboardEvent):
+            c = event.key_code
+            layout = self._layouts[1]
+            if c == Screen.KEY_HOME:
+                self.switch_focus(layout, 0, 0)
+            elif c == Screen.KEY_END:
+                self.switch_focus(layout, 0, len(self.filterList) - 1)
+            elif c == Screen.KEY_PAGE_UP:
+                pass
+            elif c == Screen.KEY_PAGE_DOWN:
+                pass
 
 
 class PreviewFrame(Frame):
