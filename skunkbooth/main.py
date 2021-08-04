@@ -6,7 +6,7 @@ from time import time
 from typing import List, Tuple
 
 from asciimatics.effects import Print
-from asciimatics.event import KeyboardEvent
+from asciimatics.event import Event, KeyboardEvent
 from asciimatics.exceptions import ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
@@ -29,10 +29,10 @@ logging.basicConfig(
 )
 
 
-def global_shortcuts(event):
+def global_shortcuts(event: Event) -> None:
     """Event handler for global shortcuts"""
-    ctrlQCode = 17
-    ctrlWCode = 23
+    ctrlQCode = Screen.ctrl('q')
+    ctrlWCode = Screen.ctrl('w')
     if isinstance(event, KeyboardEvent):
         c = event.key_code
         # Stop on q, esc, ctrl+q and ctrl+w
