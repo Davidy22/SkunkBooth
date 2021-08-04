@@ -14,6 +14,7 @@ class filter:
         """
         self.textOp = True
         self.name = "Stars"
+        self.description = "A dim space with flashing stars*"
 
     def load(self) -> None:
         """Load environment variables to be used in the filter operation"""

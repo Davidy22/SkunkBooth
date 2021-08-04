@@ -14,6 +14,7 @@ class filter:
         """
         self.textOp = True
         self.name = "Star-Stripes"
+        self.description = "Intersperse some stars* across the image"
 
     def load(self) -> None:
         """Load environment variables to be used in the filter operation"""

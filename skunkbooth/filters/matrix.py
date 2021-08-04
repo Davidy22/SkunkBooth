@@ -14,6 +14,7 @@ class filter:
         """
         self.textOp = True
         self.name = "The Matrix"
+        self.description = "Random 0s and 1s"
 
     def load(self) -> None:
         """Load environment variables to be used in the filter operation"""
