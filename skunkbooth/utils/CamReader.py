@@ -11,6 +11,7 @@ class CamReader():
 
     def __init__(self):
         self.cap = self._open_camera()
+        self.cap.set(cv.CAP_PROP_BUFFERSIZE, 1)
 
     @staticmethod
     def _open_camera() -> cv.VideoCapture:

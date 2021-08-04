@@ -42,6 +42,7 @@ def global_shortcuts(event: Event) -> None:
 
 def main() -> None:
     """Main driver function"""
+    # Video saving
     vidBuf = Queue(32767)
     vid = Process(target=videoManager, args=[vidBuf])
     vid.start()
@@ -107,6 +108,7 @@ def main() -> None:
     ]
     screen.set_scenes(scenes, unhandled_input=global_shortcuts)
     b = a = 0
+    frame = 1/40
     while True:
         try:
             if screen.has_resized():
@@ -138,9 +140,8 @@ def main() -> None:
             if webcam.image is not None and record[0]:
                 vidBuf.put(webcam.image)
             b = time()
-            if b - a < 0.05:
-                pause = max(0, min(0.001, a + 0.001 - b))
-                screen.wait_for_input(pause)
+            if b - a < frame:
+                screen.wait_for_input(a - b + frame)
             else:
                 screen.wait_for_input(0)
             a = b
