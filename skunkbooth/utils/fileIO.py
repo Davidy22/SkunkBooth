@@ -1,4 +1,5 @@
 import logging
+from functools import lru_cache
 from os import path
 from sys import platform
 from typing import List, Tuple
@@ -16,7 +17,6 @@ class IOBase:
     def __init__(self, font: str = "Hack", fontSize: int = 30):
         self.fx, self.fy = 0, 0
         self.setFont(font, fontSize)
-        self.maxCache = 5000
 
     def setFont(self, fp: str, size: int) -> None:
         """Set render font, fall back to Input if font name is invalid"""
@@ -30,11 +30,11 @@ class IOBase:
 
         px, py = self.fx, self.fy
         self.fx, self.fy = self.font.getsize("g")
-        self.glyphs = {}
-        self.renderCache = {}
+        self.renderPixel.cache_clear()
+        self.renderGlyph.cache_clear()
         self.bold = max(1, size // 30)
 
-        if px != self.fx or py != self.fy:
+        if (px, py) != (self.fx, self.fy):
             self.colours = {i: Image.new("RGB", (self.fx, self.fy)) for i in range(256)}
             for i in self.colours:
                 self.colours[i].paste(
@@ -60,48 +60,40 @@ class IOBase:
 
         for y in range(ay):
             for x in range(ax):
-                # Just draw background if character is empty
-                pixel = image[y][x]
-                if len(pixel) == 1:
-                    out.paste(self.colours[pixel[0]], (x * self.fx, y * self.fy))
-                    continue
-
-                # Render character, (text colour, bg colour, char, attribute)
-                if pixel in self.renderCache:
-                    render = self.renderCache[pixel]
-                else:
-                    fg = self.colours[pixel[2]]
-                    bg = self.colours[pixel[3]]
-                    attr = pixel[1]
-                    char = pixel[0]
-
-                    # Attributes
-                    charID = char + "bd" if attr in constants.L_BOLD else char
-                    if charID in self.glyphs:
-                        glyph = self.glyphs[charID]
-                    else:
-                        # Cache character glyphs
-                        glyph = Image.new("L", (self.fx, self.fy))
-                        ImageDraw.Draw(glyph).text(
-                            (0, 0),
-                            char,
-                            255,
-                            font=self.font,
-                            stroke_width=self.bold if charID[-2:] == "bd" else 0,
-                        )
-                        self.glyphs[charID] = glyph
-                    if attr in constants.L_REVERSE:
-                        fg, bg = bg, fg
-                    if attr in constants.L_UNDERLINE:
-                        glyph = glyph.copy()
-                        glyph.paste(self.underline, (0, 0), self.underline)
-                    render = self.renderCache[pixel] = Image.composite(fg, bg, glyph)
-
-                    if len(self.renderCache) > self.maxCache:
-                        self.renderCache.pop(next(iter(self.renderCache)))
-
-                out.paste(render, (x * self.fx, y * self.fy))
+                out.paste(self.renderPixel(image[y][x]), (x * self.fx, y * self.fy))
         return array(out)
+
+    @lru_cache(maxsize=None)
+    def renderPixel(self, pixel: Tuple) -> Image:
+        """Cached full "pixel" render method"""
+        # Just draw background if character is empty
+        if len(pixel) == 1:
+            return self.colours[pixel[0]]
+
+        # Render character, (text colour, bg colour, char, attribute)
+        fg = self.colours[pixel[2]]
+        bg = self.colours[pixel[3]]
+        attr = pixel[1]
+        char = pixel[0]
+
+        # Attributes
+        # TODO: Generalise attribute code flattening for more than just bold chars
+        glyph = self.renderGlyph(char, constants.A_BOLD if attr in constants.L_BOLD else constants.A_NORMAL)
+        if attr in constants.L_REVERSE:
+            fg, bg = bg, fg
+        if attr in constants.L_UNDERLINE:
+            glyph = glyph.copy()
+            glyph.paste(self.underline, (0, 0), self.underline)
+        return Image.composite(fg, bg, glyph)
+
+    @lru_cache(maxsize=None)
+    def renderGlyph(self, char: str, attr: str) -> Image:
+        """Cached glyph render method"""
+        glyph = Image.new("L", (self.fx, self.fy))
+        ImageDraw.Draw(glyph).text(
+            (0, 0), char, 255, font=self.font, stroke_width=self.bold if attr in constants.L_BOLD else 0
+        )
+        return glyph
 
 
 class VideoIO(IOBase):  # TODO: Other video filetypes
@@ -111,7 +103,7 @@ class VideoIO(IOBase):  # TODO: Other video filetypes
         self,
         dim: Tuple[int, int] = None,
         fps: int = 60,
-        dest: str = "gallery/out.avi",
+        dest: str = "out.avi",
         **kwargs,
     ):
         """
