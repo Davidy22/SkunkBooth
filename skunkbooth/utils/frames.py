@@ -204,7 +204,7 @@ class FilterFrame(Frame):
             f[1] = temp
             logging.info(f"{f[0].name} button created")
             filters_layout.add_widget(temp)
-            filters_layout.add_widget(Label(f[0].description, align=">"), 1)
+            filters_layout.add_widget(Label(f"{f[0].description}   ]", align=">"), 1)
 
         controls_layout = Layout([1, 1, 1])
         self.add_layout(controls_layout)
