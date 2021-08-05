@@ -4,7 +4,6 @@ We see that you have decieded to contribute to SkunkBooth and we are excited to 
 - Discussing the current state of the code
 - Submitting a fix
 - Proposing new features
-- Becoming a maintainer
 
 ## We Develop with Github
 We use github to host code, to track issues and feature requests, as well as accept pull requests.
@@ -20,10 +19,8 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 6. Issue that pull request!
 
 ## Proposing new features
-We always want our app to improve and any help is always appreciated. Open an issue and detail out the new features you are proposing and let us get back to you !
-
-## Becoming a maintainer 
-We always welcome new people here! Just initiate a discussion with our current maintainers and we will talk further. 
+We always want our app to improve and any help is always appreciated. Open an issue and detail out the new features you are proposing and let us get back to you!
+For new filters, you can use one from skunkbooth/filters as a template.
 
 ## Discussing the current state of the code
 You can use [Discussions](https://github.com/Davidy22/SkunkBooth/discussions) if you want to discuss our code.
@@ -35,13 +32,13 @@ In short, when you submit code changes, your submissions are understood to be un
 We use GitHub issues to track public bugs. Report a bug by [opening a new issue](); it's that easy!
 
 ## Write bug reports with detail, background, and sample code
-We love simple work, so make sure to keep it simple. Ideally, ensure you :
+We love simple work, so make sure to keep it simple. Ideally, ensure you:
 - Highlight the issue and how to reproduce it.
 - Any fixes or workarounds you have tried already.
 - A screenshot/video would be really good.
 
 ## Use a Consistent Coding Style
-Make sure to follow PEP8 standards, also make sure to lint using `yapf` or `black`.
+Make sure to follow PEP8 standards, also make sure to lint using `black`.
 
 ## License
 By contributing, you agree that your contributions will be licensed under its License.
