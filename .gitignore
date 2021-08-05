@@ -9,6 +9,7 @@ venv
 env
 .direnv
 .envrc
+Pipfile
 
 # Unittest reports
 .coverage*
