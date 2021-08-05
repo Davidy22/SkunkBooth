@@ -12,11 +12,12 @@ We use github to host code, to track issues and feature requests, as well as acc
 Pull requests are the best way to propose changes to the codebase (we use [Github Flow](https://guides.github.com/introduction/flow/index.html)). We actively welcome your pull requests:
 
 1. Fork the repo and create your branch from `main`.
-2. If you've added code that should be tested, add tests.
-3. If you've added some new documentation.
-4. Ensure the test suite passes.
-5. Make sure your code lints.
-6. Issue that pull request!
+2. Run `pre-commit install` to install the pre commit checks
+3. If you've added code that should be tested, add tests.
+4. If you've added some new documentation.
+5. Ensure the test suite passes.
+6. Make sure your code lints.
+7. Issue that pull request!
 
 ## Proposing new features
 We always want our app to improve and any help is always appreciated. Open an issue and detail out the new features you are proposing and let us get back to you!
