@@ -8,17 +8,17 @@ from asciimatics.exceptions import ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 
-from skunkbooth.data.defaults import LOG_FILE, PIC_DIR
+from skunkbooth.data.defaults import LOG_FILE
 from skunkbooth.utils.asciiGen import Blocks
 from skunkbooth.utils.filterManager import filterManager
 from skunkbooth.utils.frames import (
     FilterFrame, GalleryFrame, ImageSelectionModel, MainFrame, PreviewFrame
 )
+from skunkbooth.utils.helpers import (
+    CamDimensions, global_shortcuts, toggleFlag
+)
 from skunkbooth.utils.videoManager import videoManager
 from skunkbooth.utils.webcam import Webcam
-from skunkbooth.utils.helpers import (
-    global_shortcuts, toggleFlag, CamDimensions 
-)
 
 # Initialize logger
 logging.basicConfig(
@@ -27,6 +27,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
 )
+
 
 def main() -> None:
     """Main driver function"""
@@ -44,7 +45,7 @@ def main() -> None:
     logging.info(
         "Screen initialized Height:{} Width:{}".format(screen.height-8, screen.width)
     )
-    
+
     # last_scene = None
     filters = filterManager()
     converter = Blocks(screen.height, screen.width, uni=True, fill_background=True)
