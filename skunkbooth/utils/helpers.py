@@ -44,3 +44,5 @@ def CamDimensions(height: int, width: int) -> Tuple[int, int, int]:
         height = int(height * 2 / 3)
         width = int(width * 2 / 3)
         return (height, width, 2)
+    
+    
