@@ -12,12 +12,12 @@ from skunkbooth.data.defaults import PIC_DIR
 
 def global_shortcuts(event: Event) -> None:
     """Event handler for global shortcuts"""
-    ctrlQCode = Screen.ctrl('q')
-    ctrlWCode = Screen.ctrl('w')
+    ctrlQCode = Screen.ctrl("q")
+    ctrlWCode = Screen.ctrl("w")
     if isinstance(event, KeyboardEvent):
         c = event.key_code
         # Stop on q, esc, ctrl+q and ctrl+w
-        if c in (Screen.KEY_ESCAPE, ord('q'), ctrlQCode, ctrlWCode):
+        if c in (Screen.KEY_ESCAPE, ord("q"), ctrlQCode, ctrlWCode):
             raise StopApplication("User pressed quit")
 
 
