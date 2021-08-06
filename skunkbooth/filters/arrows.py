@@ -14,6 +14,7 @@ class filter:
         """
         self.textOp = True
         self.name = "Arrows"
+        self.description = "Everything is » and «"
 
     def load(self) -> None:
         """Load environment variables to be used in the filter operation"""

@@ -13,6 +13,7 @@ class filter:
         """
         self.textOp = True
         self.name = "Money, Money must be funny"
+        self.description = "Everything is ₹"
 
     def load(self) -> None:
         """Load environment variables to be used in the filter operation"""

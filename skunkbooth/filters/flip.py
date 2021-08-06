@@ -13,6 +13,7 @@ class filter:
         """
         self.textOp = True
         self.name = "Flip"
+        self.description = "Mirror the image"
 
     def load(self) -> None:
         """Load environment variables to be used in the filter operation"""
