@@ -1,11 +1,19 @@
 from os import makedirs, path
 from pathlib import Path
 
-LOG_FILE = f"{Path.home()}/skunkbooth/.logs/skunkbooth.log"
-PIC_DIR = f"{Path.home()}/skunkbooth/pictures"
+_settings = {
+    "LOG_FILE": f"{Path.home()}/skunkbooth/.logs/skunkbooth.log",
+    "PIC_DIR": f"{Path.home()}/skunkbooth/pictures",
+    "SETTINGS_FILE": f"{Path.home()}/skunkbooth/.settings/settings.conf",
+    "IMG_FORMAT": "JPG"
+}
 
-try:
-    makedirs(path.dirname(path.abspath(LOG_FILE)))
-    makedirs(path.abspath(PIC_DIR))
-except FileExistsError:
-    pass
+
+for i in ["LOG_FILE", "PIC_DIR", "SETTINGS_FILE"]:
+    try:
+        if i[-3:] == "DIR":
+            makedirs(path.abspath(_settings[i]))
+        else:
+            makedirs(path.dirname(path.abspath(_settings[i])))
+    except FileExistsError:
+        pass
