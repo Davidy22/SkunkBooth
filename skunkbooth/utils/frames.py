@@ -174,7 +174,7 @@ class GalleryFrame(Frame):
 
     def _open_image(self) -> None:
         """Opening image preview"""
-        if self._browser.value.endswith(".jpg"):
+        if self._browser.value.casefold()[-3:] in ["jpg", "png"]:
             logging.info(f"Image selected in gallery :{self._browser.value}")
             self._model.set_path(self._browser.value)
             raise NextScene("Preview")
@@ -354,15 +354,16 @@ class SettingsFrame(Frame):
         self.add_layout(title_layout)
         title_layout.add_widget(Label("Settings", align="^", height=screen.height // 16))
 
-        settings_layout = Layout([100], fill_frame=True)
+        settings_layout = Layout([1, 2], fill_frame=True)
         self.add_layout(settings_layout)
 
         imageFormat = DropdownList(
-            [("JPG", "JPG"), ("PNG", "PNG"), ("ASCII", "ASCII")], "Image output format"
+            [("JPG", "JPG"), ("PNG", "PNG"), ("ASCII", "ASCII")]
         )
         imageFormat.value = settings["IMG_FORMAT"]
         imageFormat._on_change = lambda: settings.update({"IMG_FORMAT": imageFormat.value})
-        settings_layout.add_widget(imageFormat)
+        settings_layout.add_widget(Label("Image output format"), 0)
+        settings_layout.add_widget(imageFormat, 1)
 
         controls_layout = Layout([1, 1, 1])
         self.add_layout(controls_layout)
