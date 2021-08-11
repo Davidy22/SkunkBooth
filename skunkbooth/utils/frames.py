@@ -8,9 +8,11 @@ from asciimatics.exceptions import NextScene, StopApplication
 from asciimatics.renderers import Box, ColourImageFile, StaticRenderer
 from asciimatics.screen import Screen
 from asciimatics.widgets import (
-    Button, CheckBox, DropdownList, FileBrowser, Frame, Label, Layout
+    Button, CheckBox, FileBrowser, Frame, Label, Layout
 )
 
+from skunkbooth.utils.dropdownlist import \
+    DropdownList  # Delete this on next asciimatics release
 from skunkbooth.utils.settings import settings
 
 from .webcam import Webcam
@@ -357,9 +359,7 @@ class SettingsFrame(Frame):
         settings_layout = Layout([1, 2], fill_frame=True)
         self.add_layout(settings_layout)
 
-        imageFormat = DropdownList(
-            [("JPG", "JPG"), ("PNG", "PNG"), ("ASCII", "ASCII")]
-        )
+        imageFormat = DropdownList([("JPG", "JPG"), ("PNG", "PNG"), ("ASCII", "ASCII")])
         imageFormat.value = settings["IMG_FORMAT"]
         imageFormat._on_change = lambda: settings.update({"IMG_FORMAT": imageFormat.value})
         settings_layout.add_widget(Label("Image output format"), 0)
