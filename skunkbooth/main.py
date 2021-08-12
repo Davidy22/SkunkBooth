@@ -11,18 +11,19 @@ from asciimatics.exceptions import ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 
-from skunkbooth.data.defaults import LOG_FILE, PIC_DIR
 from skunkbooth.utils.asciiGen import Blocks
 from skunkbooth.utils.filterManager import filterManager
 from skunkbooth.utils.frames import (
-    FilterFrame, GalleryFrame, ImageSelectionModel, MainFrame, PreviewFrame
+    FilterFrame, GalleryFrame, ImageSelectionModel, MainFrame, PreviewFrame,
+    SettingsFrame
 )
+from skunkbooth.utils.settings import settings
 from skunkbooth.utils.videoManager import videoManager
 from skunkbooth.utils.webcam import Webcam
 
 # Initialize logger
 logging.basicConfig(
-    filename=LOG_FILE,
+    filename=settings["LOG_FILE"],
     filemode="w",
     level=logging.INFO,
     format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
@@ -52,7 +53,7 @@ def main() -> None:
         flag[0] = not flag[0]
         # re-initialize VideoIO for new file name
         if flag[0]:
-            VID_FILE = f"{PIC_DIR}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
+            VID_FILE = f"{settings['PIC_DIR']}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
             logging.info(f"Recording new video - {VID_FILE}")
             vidBuf.put(VID_FILE)
         else:
@@ -104,6 +105,7 @@ def main() -> None:
         Scene(effects, -1, name="Main"),
         Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
         Scene([fFrame], -1, name="Filters"),
+        Scene([SettingsFrame(screen)], -1, name="Settings"),
         Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
     ]
     screen.set_scenes(scenes, unhandled_input=global_shortcuts)
@@ -130,6 +132,7 @@ def main() -> None:
                     Scene(effects, -1, name="Main"),
                     Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
                     Scene([fFrame], -1, name="Filters"),
+                    Scene([SettingsFrame(screen)], -1, name="Settings"),
                     Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
                 ]
 

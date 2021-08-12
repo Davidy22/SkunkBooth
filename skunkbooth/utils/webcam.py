@@ -7,7 +7,7 @@ from skunkbooth.data.constants import palette8
 
 from .asciiGen import ASCIIGen
 from .CamReader import CamReader
-from .fileIO import ImageIO
+from .fileIO import AsciiIO, ImageIO
 from .filterManager import filterManager
 
 
@@ -41,7 +41,10 @@ class Webcam(DynamicRenderer):
     def take_picture_and_save(self, img_name: str) -> None:
         """Takes an Image snapshot and saves it"""
         image_to_save = self.image
-        img_io = ImageIO(dest=img_name)
+        if img_name[-3:] == "txt":
+            img_io = AsciiIO(dest=img_name)
+        else:
+            img_io = ImageIO(dest=img_name)
         img_io.write(image_to_save)
 
     def _render_now(self) -> Tuple[List, List]:

@@ -11,7 +11,9 @@ from asciimatics.widgets import (
     Button, CheckBox, FileBrowser, Frame, Label, Layout
 )
 
-from skunkbooth.data.defaults import PIC_DIR
+from skunkbooth.utils.dropdownlist import \
+    DropdownList  # Delete this on next asciimatics release
+from skunkbooth.utils.settings import settings
 
 from .webcam import Webcam
 
@@ -57,6 +59,7 @@ class MainFrame(Frame):
         self._gallery_button = Button("🖼 Gallery", self._gallery, add_box=True)
         self._effects_button = Button("🖌 Effects", self._filters, add_box=True)
         self._camera_button = Button("📷 Shoot", self._shoot, add_box=True)
+        self._settings_button = Button("🔧 Settings", self._settings, add_box=True)
         self._video_recording = CheckBox(text="⏯︎ Record", on_change=toggle)
         self._quit_button = Button("🛑 Quit", self._quit, add_box=True)
 
@@ -76,13 +79,14 @@ class MainFrame(Frame):
 
         self.add_effect(camera_effect)
 
-        controls_layout = Layout([1, 1, 1, 1, 1])
+        controls_layout = Layout([1, 1, 1, 1, 1, 1])
         self.add_layout(controls_layout)
         controls_layout.add_widget(self._gallery_button, 0)
         controls_layout.add_widget(self._video_recording, 1)
         controls_layout.add_widget(self._camera_button, 2)
         controls_layout.add_widget(self._effects_button, 3)
-        controls_layout.add_widget(self._quit_button, 4)
+        controls_layout.add_widget(self._settings_button, 4)
+        controls_layout.add_widget(self._quit_button, 5)
         self.set_theme("bright")
         self.fix()
         self.webcam = webcam
@@ -105,10 +109,21 @@ class MainFrame(Frame):
     def _shoot(self) -> None:
         """Take an image"""
         logging.info("Camera was clicked")
-        img_name = f"{PIC_DIR}/Image-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.jpg"
+        if settings["IMG_FORMAT"] == "ASCII":
+            ext = ".txt"
+        else:
+            ext = f".{settings['IMG_FORMAT']}"
+        img_name = (
+            f"{settings['PIC_DIR']}/Image-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}{ext}"
+        )
         logging.info(f"Saving image {img_name}")
         self.webcam.take_picture_and_save(img_name)
         self._screen.refresh()
+
+    def _settings(self) -> None:
+        """Go to settings page"""
+        logging.info("Settings was clicked")
+        raise NextScene("Settings")
 
     @staticmethod
     def _quit() -> None:
@@ -153,13 +168,15 @@ class GalleryFrame(Frame):
         """Open file browser"""
         logging.info("File browser opened")
         self.files_layout.clear_widgets()
-        self._browser = FileBrowser(self.screen.height - 8, PIC_DIR, on_select=self._open_image)
+        self._browser = FileBrowser(
+            self.screen.height - 8, settings["PIC_DIR"], on_select=self._open_image
+        )
         self.files_layout.add_widget(self._browser)
         self.fix()
 
     def _open_image(self) -> None:
         """Opening image preview"""
-        if self._browser.value.endswith(".jpg"):
+        if self._browser.value.casefold()[-3:] in ["jpg", "png"]:
             logging.info(f"Image selected in gallery :{self._browser.value}")
             self._model.set_path(self._browser.value)
             raise NextScene("Preview")
@@ -174,7 +191,7 @@ class GalleryFrame(Frame):
 
 
 class FilterFrame(Frame):
-    """Recreatable frame to implement gallery ui"""
+    """Recreatable frame to implement filter ui"""
 
     def __init__(self, screen: Any, filters: Any, data: Any = None) -> None:
         """Initialize frame"""
@@ -317,3 +334,62 @@ class PreviewFrame(Frame):
         """Switch to Gallery from Preview"""
         logging.info("Switched to Gallery from Preview")
         raise NextScene("Gallery")
+
+
+class SettingsFrame(Frame):
+    """Recreatable frame to implement settings ui"""
+
+    def __init__(self, screen: Any) -> None:
+        """Initialize frame"""
+        super().__init__(
+            screen,
+            screen.height,
+            screen.width,
+            hover_focus=True,
+            can_scroll=True,
+            title=APP_TITLE,
+            reduce_cpu=True,
+        )
+        self._back_camera_button = Button("👈 Back to 📷", self._switch_to_camera, add_box=True)
+
+        title_layout = Layout([1])
+        self.add_layout(title_layout)
+        title_layout.add_widget(Label("Settings", align="^", height=screen.height // 16))
+
+        settings_layout = Layout([1, 2], fill_frame=True)
+        self.add_layout(settings_layout)
+
+        imageFormat = DropdownList([("JPG", "JPG"), ("PNG", "PNG"), ("ASCII", "ASCII")])
+        imageFormat.value = settings["IMG_FORMAT"]
+        imageFormat._on_change = lambda: settings.update({"IMG_FORMAT": imageFormat.value})
+        settings_layout.add_widget(Label("Image output format"), 0)
+        settings_layout.add_widget(imageFormat, 1)
+
+        controls_layout = Layout([1, 1, 1])
+        self.add_layout(controls_layout)
+        controls_layout.add_widget(self._back_camera_button, 1)
+
+        self.set_theme("bright")
+        self.fix()
+
+        logging.info("Settingsframe initialized")
+
+    def _switch_to_camera(self) -> None:
+        """Switch to Camera from settings"""
+        logging.info("Switched to Camera from settings")
+        raise NextScene("Main")
+
+    def process_event(self, event: Event) -> None:
+        """Deals with keyboard events that happen in this screen"""
+        super(SettingsFrame, self).process_event(event)
+        if isinstance(event, KeyboardEvent):
+            c = event.key_code
+            layout = self._layouts[1]
+            if c == Screen.KEY_HOME:
+                self.switch_focus(layout, 0, 0)
+            elif c == Screen.KEY_END:
+                self.switch_focus(layout, 0, len(self.settingsList) - 1)
+            elif c == Screen.KEY_PAGE_UP:
+                pass
+            elif c == Screen.KEY_PAGE_DOWN:
+                pass
