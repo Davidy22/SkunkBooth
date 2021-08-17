@@ -1,6 +1,10 @@
-# Text attributes for use when printing to the Screen.
-# 1-4 correspond to ASCIImatics attribute codes, 5+ are derivative attributes not
-# supported by ASCIImatics
+"""
+Text attributes for use when printing to the Screen.
+
+1-4 correspond to ASCIImatics attribute codes, 5+ are derivative attributes not
+supported by ASCIImatics
+"""
+
 A_BOLD = 1
 A_NORMAL = 2
 A_REVERSE = 3

@@ -27,6 +27,6 @@ class filter:
         self, image: List[List[Tuple[int, int, int, int]]]
     ) -> List[List[Tuple[int, int, int, int]]]:
         """Process an ASCII image and return an image of the same format and dims"""
-        # converting to list is expensinve but,
+        # converting to list is expensive but,
         # this is the only way to avoid crash.
         return [list(reversed(i)) for i in image]

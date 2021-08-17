@@ -20,7 +20,7 @@ class ASCIIGen:
 
     def convert(self, image: Image) -> List[List[Tuple[int, int, int, int]]]:
         """Return an ASCII image"""
-        return []
+        raise NotImplementedError
 
     def resize(self, height: int, width: int) -> None:
         """Resize output"""

@@ -46,7 +46,7 @@ class IOBase:
 
     def write(self, image: List[List[Tuple[int, int, int]]]) -> bool:
         """Template method for write()"""
-        return False
+        raise NotImplementedError
 
     def convert(self, image: List[List[Tuple[int, int, int, int]]]) -> array:
         """

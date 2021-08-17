@@ -1,4 +1,4 @@
-<!-- ![Image of skukbooth logo](Images/skunkbooth_readme.png) -->
+    <!-- ![Image of skukbooth logo](Images/skunkbooth_readme.png) -->
 <div align="center">
    <img src="Images/skunkbooth_readme.png" alt="Skunkbooth Logo" width="143" height="143">
    <br/>
@@ -44,7 +44,7 @@ We support all the modern operating systems. All you need is `python3`.
 
 ### See it in action
 
-[![Alt text](https://img.youtube.com/vi/47_HYQGqVIU/0.jpg)](https://www.youtube.com/watch?v=47_HYQGqVIU)
+[![ad](https://img.youtube.com/vi/47_HYQGqVIU/0.jpg)](https://www.youtube.com/watch?v=47_HYQGqVIU)
 
 # Usage
 

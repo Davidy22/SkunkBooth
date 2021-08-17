@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 
 
-class CamReader():
+class CamReader:
     """Utility class to operate camera hardware and capture"""
 
     def __init__(self):
@@ -23,7 +23,7 @@ class CamReader():
             logging.error("Cannot open camera")
             return None
 
-        sleep(1)
+        sleep(0.2)  # Webcam warmup time
         return cap
 
     def close_camera(self) -> None:
@@ -35,10 +35,7 @@ class CamReader():
         """Coverts image to grayscale"""
         return cv.cvtColor(im, cv.COLOR_BGR2GRAY)
 
-    def capture_image(self,
-                      flip: int = 1,
-                      w: int = 0,
-                      h: int = 0) -> np.ndarray:
+    def capture_image(self, flip: int = 1, w: int = 0, h: int = 0) -> np.ndarray:
         """If camera is opened then reads the live camera buffer"""
         ret, frame = self.cap.read()
 

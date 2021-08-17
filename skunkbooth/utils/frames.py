@@ -89,24 +89,24 @@ class MainFrame(Frame):
         self.fix()
         self.webcam = webcam
 
-        logging.info("Mainframe initialized")
+        logging.debug("Mainframe initialized")
 
     @staticmethod
     def _filters() -> None:
         """Open effects"""
-        logging.info("Effects was clicked")
+        logging.debug("Effects was clicked")
         raise NextScene("Filters")
 
     @staticmethod
     def _gallery() -> None:
         """Open gallery"""
-        logging.info("Gallery was clicked")
+        logging.debug("Gallery was clicked")
         raise NextScene("Gallery")
 
     # @staticmethod
     def _shoot(self) -> None:
         """Take an image"""
-        logging.info("Camera was clicked")
+        logging.debug("Camera was clicked")
         if settings["IMG_FORMAT"] == "ASCII":
             ext = ".txt"
         else:
@@ -120,13 +120,13 @@ class MainFrame(Frame):
 
     def _settings(self) -> None:
         """Go to settings page"""
-        logging.info("Settings was clicked")
+        logging.debug("Settings was clicked")
         raise NextScene("Settings")
 
     @staticmethod
     def _quit() -> None:
         """Quit application"""
-        logging.info("Application was stopped")
+        logging.debug("Application was stopped")
         raise StopApplication("User pressed quit")
 
 
@@ -160,11 +160,11 @@ class GalleryFrame(Frame):
         controls_layout.add_widget(self._back_camera_button, 1)
         self.set_theme("bright")
 
-        logging.info("Galleryframe initialized")
+        logging.debug("Galleryframe initialized")
 
     def _render_browser(self) -> None:
         """Open file browser"""
-        logging.info("File browser opened")
+        logging.debug("File browser opened")
         self.files_layout.clear_widgets()
         self._browser = FileBrowser(
             self.screen.height - 8, settings["PIC_DIR"], on_select=self._open_image
@@ -174,17 +174,15 @@ class GalleryFrame(Frame):
 
     def _open_image(self) -> None:
         """Opening image preview"""
-        if self._browser.value.endswith(".jpg"):
-            logging.info(f"Image selected in gallery :{self._browser.value}")
+        if self._browser.value.casefold()[-3:] in ["jpg", "png"]:
+            logging.debug(f"Image selected in gallery :{self._browser.value}")
             self._model.set_path(self._browser.value)
             raise NextScene("Preview")
-        else:
-            pass
 
     @staticmethod
     def _switch_to_camera() -> None:
         """Switch to Camera from Gallery"""
-        logging.info("Switched to Camera from Gallery")
+        logging.debug("Switched to Camera from Gallery")
         raise NextScene("Main")
 
 
@@ -217,7 +215,7 @@ class FilterFrame(Frame):
         for f in self.filterList:
             temp = CheckBox(f[0].name, name=f[0].name)
             f[1] = temp
-            logging.info(f"{f[0].name} button created")
+            logging.debug(f"{f[0].name} button created")
             filters_layout.add_widget(temp)
             filters_layout.add_widget(Label(f"{f[0].description}   ]", align=">"), 1)
 
@@ -228,13 +226,13 @@ class FilterFrame(Frame):
         self.set_theme("bright")
         self.fix()
 
-        logging.info("Galleryframe initialized")
+        logging.debug("Galleryframe initialized")
 
     def _switch_to_camera(self) -> None:
         """Switch to Camera from Filters"""
-        logging.info("Switched to Camera from Filters")
+        logging.debug("Switched to Camera from Filters")
         for i in self.filterList:
-            logging.info(f"{i[0]}, {self.filters.is_loaded(i[0])}, {i[1].value}")
+            logging.debug(f"{i[0]}, {self.filters.is_loaded(i[0])}, {i[1].value}")
             if self.filters.is_loaded(i[0].name) != i[1].value:
                 self.filters.toggle(i[0].name)
         self.save()
@@ -311,11 +309,11 @@ class PreviewFrame(Frame):
         self.set_theme("bright")
         self.fix()
 
-        logging.info("Previewframe initialized")
+        logging.debug("Previewframe initialized")
 
     def _render_image(self) -> None:
         """Open selected image"""
-        logging.info(f"Image opened in preview {self._model.get_path()}")
+        logging.debug(f"Image opened in preview {self._model.get_path()}")
         preview_effect = Print(
             self.screen,
             ColourImageFile(
@@ -330,7 +328,7 @@ class PreviewFrame(Frame):
     @staticmethod
     def _switch_to_gallery() -> None:
         """Switch to Gallery from Preview"""
-        logging.info("Switched to Gallery from Preview")
+        logging.debug("Switched to Gallery from Preview")
         raise NextScene("Gallery")
 
 
@@ -371,11 +369,11 @@ class SettingsFrame(Frame):
         self.set_theme("bright")
         self.fix()
 
-        logging.info("Settingsframe initialized")
+        logging.debug("Settingsframe initialized")
 
     def _switch_to_camera(self) -> None:
         """Switch to Camera from settings"""
-        logging.info("Switched to Camera from settings")
+        logging.debug("Switched to Camera from settings")
         raise NextScene("Main")
 
     def process_event(self, event: Event) -> None:

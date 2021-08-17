@@ -1,3 +1,4 @@
+import logging
 import sys
 from glob import glob
 from importlib import import_module
@@ -68,7 +69,7 @@ class filterManager:
             self.loadedPil[name] = self.pil.pop(name)
             self.loadedPil[name].load()
         else:
-            print("error")
+            logging.error(f"Error loading filter {name}")
 
     def unload(self, name: str) -> None:
         """Unload specified filter"""
@@ -79,7 +80,7 @@ class filterManager:
             self.pil[name] = self.loadedPil.pop(name)
             self.pil[name].load()
         else:
-            print("error")
+            logging.error(f"Error unloading filter {name}")
 
     def ascii_filter(
         self, image: List[List[Tuple[int, int, int, int]]]

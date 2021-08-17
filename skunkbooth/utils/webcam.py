@@ -24,7 +24,7 @@ class Webcam(DynamicRenderer):
         """
         The init function
 
-        :param ascii_renderer: Converter from image data to ASCII art
+        :param asciiGen: Converter from image data to ASCII art
         :param height: The allocated height for the widget
         :param width: The allocated width for the widget
         """

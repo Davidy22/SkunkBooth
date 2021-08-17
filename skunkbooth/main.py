@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 from functools import partial
 from multiprocessing import Process, Queue
-from time import time
+from time import monotonic
 from typing import List, Tuple
 
 from asciimatics.effects import Print
@@ -26,18 +26,18 @@ logging.basicConfig(
     filename=settings["LOG_FILE"],
     filemode="w",
     level=logging.INFO,
-    format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s'
+    format="%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s",
 )
 
 
 def global_shortcuts(event: Event) -> None:
     """Event handler for global shortcuts"""
-    ctrlQCode = Screen.ctrl('q')
-    ctrlWCode = Screen.ctrl('w')
+    ctrlQCode = Screen.ctrl("q")
+    ctrlWCode = Screen.ctrl("w")
     if isinstance(event, KeyboardEvent):
         c = event.key_code
         # Stop on q, esc, ctrl+q and ctrl+w
-        if c in (Screen.KEY_ESCAPE, ord('q'), ctrlQCode, ctrlWCode):
+        if c in (Screen.KEY_ESCAPE, ord("q"), ctrlQCode, ctrlWCode):
             raise StopApplication("User pressed quit")
 
 
@@ -53,7 +53,9 @@ def main() -> None:
         flag[0] = not flag[0]
         # re-initialize VideoIO for new file name
         if flag[0]:
-            VID_FILE = f"{settings['PIC_DIR']}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
+            VID_FILE = (
+                f"{settings['PIC_DIR']}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
+            )
             logging.info(f"Recording new video - {VID_FILE}")
             vidBuf.put(VID_FILE)
         else:
@@ -65,9 +67,7 @@ def main() -> None:
     toggleRecord = partial(toggleFlag, record)
     screen = Screen.open(unicode_aware=True)
 
-    logging.info(
-        "Screen initialized Height:{} Width:{}".format(screen.height-8, screen.width)
-    )
+    logging.info("Screen initialized Height:{} Width:{}".format(screen.height - 8, screen.width))
 
     # last_scene = None
     filters = filterManager()
@@ -88,16 +88,15 @@ def main() -> None:
     (webcam_height, webcam_width, offset) = CamDimensions(screen.height, screen.width)
 
     logging.info(
-        "Webcam Height:{} Webcam Width:{} Offset:{}".format(
-            webcam_height, webcam_width, offset
-        )
+        "Webcam Height:{} Webcam Width:{} Offset:{}".format(webcam_height, webcam_width, offset)
     )
 
     webcam = Webcam(converter, filters, webcam_height, webcam_width)
 
     effects = []
-    camera_effect = Print(screen, webcam, y=TOP_MARGIN - 1, x=int(
-        screen.width / 6) + offset, transparent=False)
+    camera_effect = Print(
+        screen, webcam, y=TOP_MARGIN - 1, x=int(screen.width / 6) + offset, transparent=False
+    )
     effects.append(MainFrame(screen, webcam, toggleRecord, camera_effect))
 
     fFrame = FilterFrame(screen, filters)
@@ -106,26 +105,27 @@ def main() -> None:
         Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
         Scene([fFrame], -1, name="Filters"),
         Scene([SettingsFrame(screen)], -1, name="Settings"),
-        Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
+        Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview"),
     ]
     screen.set_scenes(scenes, unhandled_input=global_shortcuts)
     b = a = 0
-    frame = 1/40
+    frame = 1 / 40
     while True:
         try:
             if screen.has_resized():
                 screen.close()
                 screen = Screen.open(unicode_aware=True)
                 effects = []
-                (webcam_height, webcam_width, offset) = CamDimensions(
-                    screen.height, screen.width
-                )
+                (webcam_height, webcam_width, offset) = CamDimensions(screen.height, screen.width)
                 webcam.resize(webcam_height, webcam_width)
                 converter.resize(screen.height, screen.width)
-                camera_effect = Print(screen, webcam, y=TOP_MARGIN - 1, x=int(
-                    screen.width / 6) + offset)
+                camera_effect = Print(
+                    screen, webcam, y=TOP_MARGIN - 1, x=int(screen.width / 6) + offset
+                )
                 record = [True]
-                effects.append(MainFrame(screen, webcam, partial(toggleFlag, record), camera_effect))
+                effects.append(
+                    MainFrame(screen, webcam, partial(toggleFlag, record), camera_effect)
+                )
                 fNext = FilterFrame(screen, filters, data=fFrame._data)
                 fFrame = fNext
                 scenes = [
@@ -133,7 +133,7 @@ def main() -> None:
                     Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
                     Scene([fFrame], -1, name="Filters"),
                     Scene([SettingsFrame(screen)], -1, name="Settings"),
-                    Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
+                    Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview"),
                 ]
 
                 screen.set_scenes(scenes, unhandled_input=global_shortcuts)
@@ -142,7 +142,7 @@ def main() -> None:
 
             if webcam.image is not None and record[0]:
                 vidBuf.put(webcam.image)
-            b = time()
+            b = monotonic()
             if b - a < frame:
                 screen.wait_for_input(a - b + frame)
             else:
