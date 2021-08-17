@@ -53,9 +53,7 @@ def main() -> None:
         flag[0] = not flag[0]
         # re-initialize VideoIO for new file name
         if flag[0]:
-            VID_FILE = (
-                f"{settings['PIC_DIR']}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
-            )
+            VID_FILE = f"{settings['PIC_DIR']}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
             logging.info(f"Recording new video - {VID_FILE}")
             vidBuf.put(VID_FILE)
         else:
@@ -105,7 +103,7 @@ def main() -> None:
         Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
         Scene([fFrame], -1, name="Filters"),
         Scene([SettingsFrame(screen)], -1, name="Settings"),
-        Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview"),
+        Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
     ]
     screen.set_scenes(scenes, unhandled_input=global_shortcuts)
     b = a = 0
@@ -133,7 +131,7 @@ def main() -> None:
                     Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
                     Scene([fFrame], -1, name="Filters"),
                     Scene([SettingsFrame(screen)], -1, name="Settings"),
-                    Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview"),
+                    Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
                 ]
 
                 screen.set_scenes(scenes, unhandled_input=global_shortcuts)

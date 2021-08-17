@@ -3,9 +3,9 @@ from pathlib import Path
 
 _settings = {
     "LOG_FILE": f"{Path.home()}/skunkbooth/.logs/skunkbooth.log",
-    "PIC_DIR": f"{Path.home()}/skunkbooth/pictures",
     "SETTINGS_FILE": f"{Path.home()}/skunkbooth/.settings/settings.conf",
-    "IMG_FORMAT": "JPG",
+    "PIC_DIR": f"{Path.home()}/skunkbooth/pictures",
+    "IMG_FORMAT": "JPG"
 }
 
 

@@ -8,9 +8,11 @@ from asciimatics.exceptions import NextScene, StopApplication
 from asciimatics.renderers import Box, ColourImageFile, StaticRenderer
 from asciimatics.screen import Screen
 from asciimatics.widgets import (
-    Button, CheckBox, DropdownList, FileBrowser, Frame, Label, Layout
+    Button, CheckBox, FileBrowser, Frame, Label, Layout
 )
 
+from skunkbooth.utils.dropdownlist import \
+    DropdownList  # Delete this on next asciimatics release
 from skunkbooth.utils.settings import settings
 
 from .webcam import Webcam
@@ -174,8 +176,8 @@ class GalleryFrame(Frame):
 
     def _open_image(self) -> None:
         """Opening image preview"""
-        if self._browser.value.casefold()[-3:] in ["jpg", "png"]:
-            logging.debug(f"Image selected in gallery :{self._browser.value}")
+        if self._browser.value.endswith(".jpg"):
+            logging.info(f"Image selected in gallery :{self._browser.value}")
             self._model.set_path(self._browser.value)
             raise NextScene("Preview")
 
