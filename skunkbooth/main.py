@@ -53,7 +53,9 @@ def main() -> None:
         flag[0] = not flag[0]
         # re-initialize VideoIO for new file name
         if flag[0]:
-            VID_FILE = f"{settings['PIC_DIR']}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
+            VID_FILE = (
+                f"{settings['PIC_DIR']}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
+            )
             logging.info(f"Recording new video - {VID_FILE}")
             vidBuf.put(VID_FILE)
         else:
@@ -69,14 +71,14 @@ def main() -> None:
 
     # last_scene = None
     filters = filterManager()
-    converter = Blocks(screen.height, screen.width, uni=True, fill_background=True)
+    converter = Blocks(screen.height - 8, screen.width, uni=True, fill_background=True)
 
     def CamDimensions(height: int, width: int) -> Tuple[int, int, int]:
         """Calculate dimensions for vertical squeeze screen sizes"""
         if width / height >= 4:
             height -= 8
             var_dim = int(height * 4)  # Max width is around twice height in most cases
-            offset = int(width / 2 - var_dim / 2.5 - width / 5)
+            offset = int(width / 2 - var_dim / 4 - width / 5)
             return (height, var_dim, offset)
         # Add margins of 1/6x,y if no vertical squeeze
         height = int(height * 2 / 3)
@@ -103,7 +105,7 @@ def main() -> None:
         Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
         Scene([fFrame], -1, name="Filters"),
         Scene([SettingsFrame(screen)], -1, name="Settings"),
-        Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
+        Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview"),
     ]
     screen.set_scenes(scenes, unhandled_input=global_shortcuts)
     b = a = 0
@@ -116,7 +118,7 @@ def main() -> None:
                 effects = []
                 (webcam_height, webcam_width, offset) = CamDimensions(screen.height, screen.width)
                 webcam.resize(webcam_height, webcam_width)
-                converter.resize(screen.height, screen.width)
+                converter.resize(screen.height - 8, screen.width)
                 camera_effect = Print(
                     screen, webcam, y=TOP_MARGIN - 1, x=int(screen.width / 6) + offset
                 )
@@ -131,7 +133,7 @@ def main() -> None:
                     Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
                     Scene([fFrame], -1, name="Filters"),
                     Scene([SettingsFrame(screen)], -1, name="Settings"),
-                    Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview")
+                    Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview"),
                 ]
 
                 screen.set_scenes(scenes, unhandled_input=global_shortcuts)
