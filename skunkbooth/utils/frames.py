@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from gettext import translation
 from typing import Any, Callable
 
 from asciimatics.effects import Effect, Print
@@ -17,7 +18,10 @@ from skunkbooth.utils.settings import settings
 
 from .webcam import Webcam
 
-APP_TITLE = "Skunkbooth"
+temp = translation("base", localedir="locales", languages=[settings["LANGUAGE"]])
+temp.install()
+_ = temp.gettext
+APP_TITLE = _("Skunkbooth")
 
 
 class ImageSelectionModel(object):
@@ -56,12 +60,12 @@ class MainFrame(Frame):
             reduce_cpu=True,
         )
         # Made the labels below short so as to fit small screens
-        self._gallery_button = Button("🖼 Gallery", self._gallery, add_box=True)
-        self._effects_button = Button("🖌 Effects", self._filters, add_box=True)
-        self._camera_button = Button("📷 Shoot", self._shoot, add_box=True)
-        self._settings_button = Button("🔧 Settings", self._settings, add_box=True)
-        self._video_recording = CheckBox(text="⏯︎ Record", on_change=toggle)
-        self._quit_button = Button("🛑 Quit", self._quit, add_box=True)
+        self._gallery_button = Button(_("🖼 Gallery"), self._gallery, add_box=True)
+        self._effects_button = Button(_("🖌 Effects"), self._filters, add_box=True)
+        self._camera_button = Button(_("📷 Shoot"), self._shoot, add_box=True)
+        self._settings_button = Button(_("🔧 Settings"), self._settings, add_box=True)
+        self._video_recording = CheckBox(_("⏯︎ Record"), on_change=toggle)
+        self._quit_button = Button(_("🛑 Quit"), self._quit, add_box=True)
 
         box = Box(screen.width, screen.height, uni=True)
         box_effect = Print(screen, box, y=0)
@@ -150,7 +154,7 @@ class GalleryFrame(Frame):
             reduce_cpu=True,
         )
         self._model = model
-        self._back_camera_button = Button("👈 Back to 📷", self._switch_to_camera, add_box=True)
+        self._back_camera_button = Button(_("👈 Back to 📷"), self._switch_to_camera, add_box=True)
 
         title_layout = Layout([1])
         self.add_layout(title_layout)
@@ -158,7 +162,7 @@ class GalleryFrame(Frame):
         self.add_layout(self.files_layout)
         controls_layout = Layout([1, 1, 1])
         self.add_layout(controls_layout)
-        title_layout.add_widget(Label("Gallery", align="^", height=screen.height // 16))
+        title_layout.add_widget(Label(_("Gallery"), align="^", height=screen.height // 16))
         controls_layout.add_widget(self._back_camera_button, 1)
         self.set_theme("bright")
 
@@ -203,13 +207,13 @@ class FilterFrame(Frame):
             data=data,
             reduce_cpu=True,
         )
-        self._back_camera_button = Button("👈 Back to 📷", self._switch_to_camera, add_box=True)
+        self._back_camera_button = Button(_("👈 Back to 📷"), self._switch_to_camera, add_box=True)
         self.filters = filters
         self.filterList = [[i, None] for i in filters.filters]
 
         title_layout = Layout([1])
         self.add_layout(title_layout)
-        title_layout.add_widget(Label("Filters", align="^", height=screen.height // 16))
+        title_layout.add_widget(Label(_("Filters"), align="^", height=screen.height // 16))
 
         filters_layout = Layout([100, 100], fill_frame=True)
         self.add_layout(filters_layout)
@@ -279,7 +283,7 @@ class PreviewFrame(Frame):
             reduce_cpu=True,
         )
         self._model = model
-        self._back_gallery_button = Button("👈 Back to 🖼", self._switch_to_gallery, add_box=True)
+        self._back_gallery_button = Button(_("👈 Back to 🖼"), self._switch_to_gallery, add_box=True)
         box = Box(screen.width, screen.height, uni=True)
         box_effect = Print(screen, box, y=0)
         self.add_effect(box_effect)
@@ -296,7 +300,7 @@ class PreviewFrame(Frame):
 
         header_effect = Print(
             screen,
-            StaticRenderer(images=["Photo Preview"]),
+            StaticRenderer(images=[_("Photo Preview")]),
             y=1,
             x=int(((screen.width - 4) / 2) - 5),
             attr=1,
@@ -346,23 +350,36 @@ class SettingsFrame(Frame):
             hover_focus=True,
             can_scroll=True,
             title=APP_TITLE,
-            reduce_cpu=True,
         )
-        self._back_camera_button = Button("👈 Back to 📷", self._switch_to_camera, add_box=True)
+        self._back_camera_button = Button(_("👈 Back to 📷"), self._switch_to_camera, add_box=True)
 
         title_layout = Layout([1])
         self.add_layout(title_layout)
-        title_layout.add_widget(Label("Settings", align="^", height=screen.height // 16))
+        title_layout.add_widget(Label(_("Settings"), align="^", height=screen.height // 16))
 
         settings_layout = Layout([100], fill_frame=True)
         self.add_layout(settings_layout)
 
         imageFormat = DropdownList(
-            [("JPG", "JPG"), ("PNG", "PNG"), ("ASCII", "ASCII")], "Image output format"
+            [("JPG", "JPG"), ("PNG", "PNG"), ("ASCII", "ASCII")], _("Image output format")
         )
         imageFormat.value = settings["IMG_FORMAT"]
         imageFormat._on_change = lambda: settings.update({"IMG_FORMAT": imageFormat.value})
         settings_layout.add_widget(imageFormat)
+
+        language = DropdownList([("English", "en"), ("Esperanto", "eo")], _("Language"))
+        language.value = settings["LANGUAGE"]
+
+        def _switchLanguage() -> None:
+            settings.update({"LANGUAGE": language.value})
+            temp = translation("base", localedir="locales", languages=[language.value])
+            temp.install()
+            global _
+            _ = temp.gettext
+            screen.lang_switch = True
+
+        language._on_change = _switchLanguage
+        settings_layout.add_widget(language)
 
         controls_layout = Layout([1, 1, 1])
         self.add_layout(controls_layout)

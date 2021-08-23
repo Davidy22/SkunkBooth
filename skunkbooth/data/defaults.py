@@ -5,7 +5,8 @@ _settings = {
     "LOG_FILE": f"{Path.home()}/skunkbooth/.logs/skunkbooth.log",
     "SETTINGS_FILE": f"{Path.home()}/skunkbooth/.settings/settings.conf",
     "PIC_DIR": f"{Path.home()}/skunkbooth/pictures",
-    "IMG_FORMAT": "JPG"
+    "IMG_FORMAT": "JPG",
+    "LANGUAGE": "en"
 }
 
 

@@ -3,6 +3,7 @@ We see that you have decieded to contribute to SkunkBooth and we are excited to 
 - Reporting a bug
 - Discussing the current state of the code
 - Submitting a fix
+- Translating to a new language
 - Proposing new features
 
 ## We Develop with Github
@@ -25,6 +26,14 @@ For new filters, you can use one from skunkbooth/filters as a template.
 
 ## Discussing the current state of the code
 You can use [Discussions](https://github.com/Davidy22/SkunkBooth/discussions) if you want to discuss our code.
+
+## Translating to a new language
+In the locales directory, run:
+```
+mkdir -p {two letter language code}/LC_MESSAGES
+cp base.pot {two letter language code}/LC_MESSAGES/base.po
+```
+And start adding translations to your new base.po file. Once you're done, run locales.sh in the top level of the repository to bake the translation file, and add your language to the drop-down menu in the settings menu in frames.py.
 
 ## Any contributions you make will be under the Software License
 In short, when you submit code changes, your submissions are understood to be under the same license that covers the project. Feel free to contact the maintainers if that's a concern.

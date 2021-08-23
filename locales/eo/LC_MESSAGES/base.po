@@ -1,0 +1,75 @@
+# Skunkbooth base translation file
+# David Yang <davidyang6us@gmail.com>. 2021
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-08-23 21:02+0800\n"
+"PO-Revision-Date: 2021-08-23 18:57+0800\n"
+"Last-Translator: David Yang <davidyang6us@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+#: skunkbooth/utils/frames.py:22
+msgid "Skunkbooth"
+msgstr ""
+
+#: skunkbooth/utils/frames.py:60
+msgid "🖼 Gallery"
+msgstr "🖼 Galerio"
+
+#: skunkbooth/utils/frames.py:61
+msgid "🖌 Effects"
+msgstr "🖌 Efikoj"
+
+#: skunkbooth/utils/frames.py:62
+msgid "📷 Shoot"
+msgstr "📷 Fotu"
+
+#: skunkbooth/utils/frames.py:63
+msgid "🔧 Settings"
+msgstr "🔧 Agordoj"
+
+#: skunkbooth/utils/frames.py:64
+msgid "⏯︎ Record"
+msgstr "⏯︎ Rekordi"
+
+#: skunkbooth/utils/frames.py:65
+msgid "🛑 Quit"
+msgstr "🛑 Lasu"
+
+#: skunkbooth/utils/frames.py:154 skunkbooth/utils/frames.py:207
+#: skunkbooth/utils/frames.py:352
+msgid "👈 Back to 📷"
+msgstr "👈 Reiru al 📷"
+
+#: skunkbooth/utils/frames.py:162
+msgid "Gallery"
+msgstr "Galerio"
+
+#: skunkbooth/utils/frames.py:213
+msgid "Filters"
+msgstr "Efikoj"
+
+#: skunkbooth/utils/frames.py:283
+msgid "👈 Back to 🖼"
+msgstr "👈 Reiru al 🖼"
+
+#: skunkbooth/utils/frames.py:300
+msgid "Photo Preview"
+msgstr "Antaŭrigarda foto"
+
+#: skunkbooth/utils/frames.py:356
+msgid "Settings"
+msgstr "Agordoj"
+
+#: skunkbooth/utils/frames.py:362
+msgid "Image output format"
+msgstr "Bildformato"
+
+#: skunkbooth/utils/frames.py:369
+msgid "Language"
+msgstr "Lingvo"

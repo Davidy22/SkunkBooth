@@ -108,13 +108,15 @@ def main() -> None:
         Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview"),
     ]
     screen.set_scenes(scenes, unhandled_input=global_shortcuts)
+    screen.lang_switch = False
     b = a = 0
     frame = 1 / 40
     while True:
         try:
-            if screen.has_resized():
+            if screen.has_resized() or screen.lang_switch:
                 screen.close()
                 screen = Screen.open(unicode_aware=True)
+                screen.lang_switch = False
                 effects = []
                 (webcam_height, webcam_width, offset) = CamDimensions(screen.height, screen.width)
                 webcam.resize(webcam_height, webcam_width)
