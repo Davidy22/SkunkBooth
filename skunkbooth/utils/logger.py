@@ -1,5 +1,4 @@
 import logging
-import os
 from pathlib import Path
 
 
@@ -8,11 +7,9 @@ class CustomLogger:
 
     def __init__(self, fileoutpath: str) -> None:
         """Initializing logging module"""
-        self.fileoutpath = fileoutpath
+        self.fileoutpath = Path(fileoutpath).absolute()
+        self.fileoutpath.parent.mkdir(parents=True, exist_ok=True)
 
-        Path.mkdir(
-            Path(os.path.dirname(os.path.abspath(__file__)) + os.sep + "Logs"), exist_ok=True
-        )
         logging.basicConfig(
             filename=self.fileoutpath,
             filemode="w",

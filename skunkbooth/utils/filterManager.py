@@ -1,8 +1,7 @@
 import logging
 import sys
-from glob import glob
 from importlib import import_module
-from os.path import abspath, basename, dirname, join
+from pathlib import Path
 from typing import List, Tuple
 
 from PIL import Image
@@ -23,11 +22,12 @@ class filterManager:
     """
 
     def __init__(self):
-        sys.path.extend(abspath("filters"))
-        modules = glob(join(dirname(__file__), "..", "filters", "*.py"))
+        filters_path = Path(__file__).absolute().parents[1] / "filters"
+        sys.path.extend(f"{filters_path}")
+        modules = filters_path.glob("*.py")
         f = [
-            import_module(f"skunkbooth.filters.{basename(f)[:-3]}").filter()
-            for f in modules if "__init__.py" not in f
+            import_module(f"skunkbooth.filters.{f.name[:-3]}").filter()
+            for f in modules if "__init__.py" not in f.name
         ]
         self.pil, self.ascii = {}, {}
         for i in f:

@@ -1,6 +1,6 @@
 import logging
 from functools import lru_cache
-from os import path
+from pathlib import Path
 from sys import platform
 from typing import List, Tuple
 
@@ -20,12 +20,13 @@ class IOBase:
 
     def setFont(self, fp: str, size: int) -> None:
         """Set render font, fall back to Input if font name is invalid"""
-        fp = f'{path.join(path.dirname(path.abspath(__file__)), "..", "data", fp)}.ttf'
+        font_path = Path(__file__).absolute().parents[1] / "data"
+        fp = str(font_path / f"{fp}.ttf")
         try:
             self.font = ImageFont.truetype(fp, size)
         except OSError:
             logging.error(f"Font {fp} not found, falling back.")
-            fp = f'{path.join(path.dirname(path.abspath(__file__)), "..", "data", "Hack.ttf")}'
+            fp = str(font_path / "Hack.ttf")
             self.font = ImageFont.truetype(fp, size)
 
         px, py = self.fx, self.fy
