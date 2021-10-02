@@ -100,8 +100,8 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-
 ### Clone the repo
 
 ```shell
-git clone https://github.com/Davidy22/scholarlySkunkJam.git
-cd scholarlySkunkJam
+git clone https://github.com/Davidy22/SkunkBooth.git
+cd SkunkBooth
 ```
 
 ### Activate poetry shell
