@@ -1,4 +1,3 @@
-    <!-- ![Image of skukbooth logo](Images/skunkbooth_readme.png) -->
 <div align="center">
    <img src="Images/skunkbooth_readme.png" alt="Skunkbooth Logo" width="143" height="143">
    <br/>
