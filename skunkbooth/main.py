@@ -48,7 +48,7 @@ def main() -> None:
     vid = Process(target=videoManager, args=[vidBuf])
     vid.start()
 
-    def toggleFlag(flag: List[int]) -> None:
+    def toggleFlag(flag: List[int]) -> int:
         """Temp function for toggling video recording from inside screen"""
         flag[0] = not flag[0]
         # re-initialize VideoIO for new file name
@@ -60,6 +60,7 @@ def main() -> None:
             vidBuf.put(VID_FILE)
         else:
             logging.info("Recording stopped.")
+        return flag[0]
 
     TOP_MARGIN = 4
     image_selection = ImageSelectionModel()
