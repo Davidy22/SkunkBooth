@@ -13,10 +13,12 @@ from asciimatics.screen import Screen
 
 from skunkbooth.utils.asciiGen import Blocks
 from skunkbooth.utils.filterManager import filterManager
-from skunkbooth.utils.frames import (
-    FilterFrame, GalleryFrame, ImageSelectionModel, MainFrame, PreviewFrame,
-    SettingsFrame
-)
+from skunkbooth.utils.frame import ImageSelectionModel
+from skunkbooth.utils.frames.filter_frame import FilterFrame
+from skunkbooth.utils.frames.gallery_frame import GalleryFrame
+from skunkbooth.utils.frames.main_frame import MainFrame
+from skunkbooth.utils.frames.preview_frame import PreviewFrame
+from skunkbooth.utils.frames.settings_frame import SettingsFrame
 from skunkbooth.utils.settings import settings
 from skunkbooth.utils.videoManager import videoManager
 from skunkbooth.utils.webcam import Webcam
