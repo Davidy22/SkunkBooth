@@ -2,20 +2,25 @@ import logging
 from gettext import translation
 from typing import Any
 
+import cv2 as cv
 from asciimatics.event import Event, KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Frame, Label, Layout
 
+from skunkbooth.utils.CamReader import CamReader
 from skunkbooth.utils.dropdownlist import DropdownList
 from skunkbooth.utils.frame import APP_TITLE
 from skunkbooth.utils.settings import settings
+from skunkbooth.utils.webcam import Webcam
+
+MAX_DEVICES = 10
 
 
 class SettingsFrame(Frame):
     """Recreatable frame to implement settings ui"""
 
-    def __init__(self, screen: Any) -> None:
+    def __init__(self, screen: Any, webcam: Webcam) -> None:
         """Initialize frame"""
         super().__init__(
             screen,
@@ -25,6 +30,7 @@ class SettingsFrame(Frame):
             can_scroll=True,
             title=APP_TITLE,
         )
+        self._webcam = webcam
         self._back_camera_button = Button(_("👈 Back to 📷"), self._switch_to_camera, add_box=True)
 
         title_layout = Layout([1])
@@ -54,6 +60,36 @@ class SettingsFrame(Frame):
 
         language._on_change = _switchLanguage
         settings_layout.add_widget(language)
+
+        def _list_device_ids() -> [int]:
+            """Returns a list of device IDs."""
+            is_working = True
+            dev_port = 0
+            working_ports = []
+            while is_working and dev_port < MAX_DEVICES:
+                camera = cv.VideoCapture(dev_port)
+                if camera.isOpened():
+                    is_working = camera.read()[0]
+
+                    if is_working:
+                        working_ports.append(dev_port)
+                dev_port += 1
+            return working_ports
+
+        def _make_device_dropdown_list(device_ids: list[int]) -> list(tuple(str, str)):
+            return list((str(id), str(id)) for id in device_ids)
+
+        def _update_device() -> None:
+            settings.update({"DEVICE": device.value})
+            webcam.camera = CamReader(int(device.value))
+            screen.device_switch = True
+
+        device_ids = _list_device_ids()
+        device = DropdownList(_make_device_dropdown_list(device_ids), _("Device"))
+        device.value = settings["DEVICE"]
+        device._on_change = _update_device
+
+        settings_layout.add_widget(device)
 
         controls_layout = Layout([1, 1, 1])
         self.add_layout(controls_layout)

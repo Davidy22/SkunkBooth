@@ -9,16 +9,16 @@ from PIL import Image
 class CamReader:
     """Utility class to operate camera hardware and capture"""
 
-    def __init__(self):
-        self.cap = self._open_camera()
+    def __init__(self, device_id: int = 0):
+        self.cap = self._open_camera(device_id)
         self.cap.set(cv.CAP_PROP_BUFFERSIZE, 1)
 
     @staticmethod
-    def _open_camera() -> cv.VideoCapture:
+    def _open_camera(device_id: int) -> cv.VideoCapture:
         """Opens the camera"""
         #  0 -> camera number, if external camera is installed this number needs to be changed
         # Since a hardware can be only accessible via one user, I/O limitation
-        cap = cv.VideoCapture(0)
+        cap = cv.VideoCapture(device_id)
         if not cap.isOpened():
             logging.error("Cannot open camera")
             return None

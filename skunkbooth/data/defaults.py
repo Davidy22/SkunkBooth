@@ -7,7 +7,8 @@ _settings = {
     "SETTINGS_FILE": f"{SKUNKBOOTH_DIR}/.settings/settings.conf",
     "PIC_DIR": f"{SKUNKBOOTH_DIR}/pictures",
     "IMG_FORMAT": "JPG",
-    "LANGUAGE": "en"
+    "LANGUAGE": "en",
+    "DEVICE": str(0)
 }
 
 

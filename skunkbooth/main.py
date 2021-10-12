@@ -107,11 +107,12 @@ def main() -> None:
         Scene(effects, -1, name="Main"),
         Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
         Scene([fFrame], -1, name="Filters"),
-        Scene([SettingsFrame(screen)], -1, name="Settings"),
+        Scene([SettingsFrame(screen, webcam)], -1, name="Settings"),
         Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview"),
     ]
     screen.set_scenes(scenes, unhandled_input=global_shortcuts)
     screen.lang_switch = False
+    screen.device_switch = False
     b = a = 0
     frame = 1 / 40
     while True:
@@ -137,7 +138,7 @@ def main() -> None:
                     Scene(effects, -1, name="Main"),
                     Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
                     Scene([fFrame], -1, name="Filters"),
-                    Scene([SettingsFrame(screen)], -1, name="Settings"),
+                    Scene([SettingsFrame(screen, webcam)], -1, name="Settings"),
                     Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview"),
                 ]
 
