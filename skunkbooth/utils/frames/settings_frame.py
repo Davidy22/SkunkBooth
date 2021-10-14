@@ -1,6 +1,6 @@
 import logging
 from gettext import translation
-from typing import Any
+from typing import Any, List, Tuple
 
 import cv2 as cv
 from asciimatics.event import Event, KeyboardEvent
@@ -61,7 +61,7 @@ class SettingsFrame(Frame):
         language._on_change = _switchLanguage
         settings_layout.add_widget(language)
 
-        def _list_device_ids() -> [int]:
+        def _list_device_ids() -> List[int]:
             """Returns a list of device IDs."""
             is_working = True
             dev_port = 0
@@ -76,7 +76,7 @@ class SettingsFrame(Frame):
                 dev_port += 1
             return working_ports
 
-        def _make_device_dropdown_list(device_ids: list[int]) -> list(tuple(str, str)):
+        def _make_device_dropdown_list(device_ids: List[int]) -> List[Tuple[str, str]]:
             return list((str(id), str(id)) for id in device_ids)
 
         def _update_device() -> None:
