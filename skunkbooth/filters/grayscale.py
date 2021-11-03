@@ -3,7 +3,7 @@ from PIL.ImageOps import grayscale
 
 
 class filter:
-    """Sample filter for PIL operations"""
+    """Grayscale filter."""
 
     def __init__(self):
         """
