@@ -1,10 +1,9 @@
-from random import randint
-from typing import List, Tuple
 import random
+from typing import List, Tuple
 
 
 class filter:
-    """Sample filter for ASCII operations"""
+    """Deck of Cards filter."""
 
     def __init__(self):
         """
