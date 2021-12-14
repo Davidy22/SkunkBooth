@@ -13,7 +13,7 @@ class filter:
         name will be the name of the filter to be used for display/indexing
         """
         self.textOp = False
-        self.name = "Cold Filter"
+        self.name = "Cold"
         self.description = "Cold filter effect"
 
     def load(self) -> None:
