@@ -13,8 +13,8 @@ class filter:
         name will be the name of the filter to be used for display/indexing
         """
         self.textOp = False
-        self.name = "Autocontrast"
-        self.description = "Automatically tune image contrast"
+        self.name = "Dark Lighting"
+        self.description = "Adjusts contrast for dark lighting"
 
     def load(self) -> None:
         """Load environment variables to be used in the filter operation"""
@@ -26,4 +26,4 @@ class filter:
 
     def filter(self, image: Image.Image) -> Image.Image:
         """Process a PIL image and return an image of the same format and dims"""
-        return autocontrast(image)
+        return autocontrast(image, cutoff=(0, 3))
