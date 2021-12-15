@@ -27,4 +27,3 @@ class filter:
     def filter(self, image: Image.Image) -> Image.Image:
         """Process a PIL image and return an image of the same format and dims"""
         return autocontrast(image, cutoff=(0, 3))
-        
