@@ -1,5 +1,5 @@
 from PIL import Image
-from PIL.ImageOps import grayscale, posterize
+from PIL.ImageOps import posterize
 
 
 class filter:
