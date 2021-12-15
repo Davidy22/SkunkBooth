@@ -31,3 +31,4 @@ class filter:
         symbols = ["+", "-", "=", "*", "x", "÷", "/", "≠", "≈", ">", "≥", 
             "<", "≤", "√", "%", "π", "∞", "∑", "φ", "μ", "⊆", "⊇", "⊄"]
         return [[(random.choice(symbols), j[1], j[2], 0) for j in i] for i in image]
+        
