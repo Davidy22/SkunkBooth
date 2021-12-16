@@ -1,11 +1,12 @@
-import logging
+import logging, asyncio
 from datetime import datetime
 from functools import partial
 from multiprocessing import Process, Queue
 from time import monotonic
 from typing import List, Tuple
 
-from asciimatics.effects import Print
+from asciimatics.effects import Print, Cycle, Stars
+from asciimatics.renderers import FigletText
 from asciimatics.event import Event, KeyboardEvent
 from asciimatics.exceptions import ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
@@ -41,6 +42,22 @@ def global_shortcuts(event: Event) -> None:
         # Stop on q, esc, ctrl+q and ctrl+w
         if c in (Screen.KEY_ESCAPE, ord("q"), ctrlQCode, ctrlWCode):
             raise StopApplication("User pressed quit")
+
+def savingVideo(screen, vidBuf) -> None: #Animation for saving video
+    effects = [ #inspired by asciimatics examples/documentation
+        Cycle(
+            screen,
+            FigletText("SAVING", font='big'),
+            screen.height // 2 - 8),
+        Cycle(
+            screen,
+            FigletText("VIDEO!", font='big'),
+            screen.height // 2 + 3),
+        Stars(screen, (screen.width + screen.height) // 2)
+    ]
+    screen.play([Scene(effects, 500)], repeat=False)
+    if vidBuf.empty(): #if the buffer is empty, close the screen
+        screen.close()
 
 
 def main() -> None:
@@ -159,10 +176,9 @@ def main() -> None:
         except (StopApplication, KeyboardInterrupt):
             vidBuf.put(None)
             logging.info("Stopping application")
-            screen.close()
-            if not vidBuf.empty():  # TODO: Make this nicer than a print statement
+            if not vidBuf.empty():
                 logging.info("Program stopped, saving remaining video")
-                print("Saving video...")
+                savingVideo(screen, vidBuf) #pretty animation for saving video
             vid.join()
             quit(0)
 
