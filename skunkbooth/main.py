@@ -55,7 +55,7 @@ def savingVideo(screen, vidBuf) -> None: #Animation for saving video
             screen.height // 2 + 3),
         Stars(screen, (screen.width + screen.height) // 2)
     ]
-    screen.play([Scene(effects, 500)], repeat=False)
+    screen.play([Scene(effects, 100)], repeat=False)
     if vidBuf.empty(): #if the buffer is empty, close the screen
         screen.close()
 
