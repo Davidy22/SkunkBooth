@@ -179,6 +179,7 @@ def main() -> None:
             if not vidBuf.empty():
                 logging.info("Program stopped, saving remaining video")
                 savingVideo(screen, vidBuf) #pretty animation for saving video
+            screen.close()
             vid.join()
             quit(0)
 
