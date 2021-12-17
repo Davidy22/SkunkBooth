@@ -1,5 +1,5 @@
 from PIL import Image
-from PIL.ImageOps import grayscale, colorize
+from PIL.ImageOps import colorize, grayscale
 
 
 class filter:

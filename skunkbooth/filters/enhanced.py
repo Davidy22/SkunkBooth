@@ -1,5 +1,4 @@
-from PIL import Image, ImageFilter, ImageEnhance
-
+from PIL import Image, ImageEnhance, ImageFilter
 
 
 class filter:
@@ -26,12 +25,12 @@ class filter:
 
     def filter(self, image: Image.Image) -> Image.Image:
         """Process a PIL image and return an image of the same format and dims"""
-        #Define the object edges better
+        # Define the object edges better
         image = image.filter(ImageFilter.EDGE_ENHANCE_MORE)
-        #improve sharpness
+        # improve sharpness
         enhancer = ImageEnhance.Sharpness(image)
         image = enhancer.enhance(4.0)
-        #Increase brightness to show more features
+        # Increase brightness to show more features
         enhancer_brightness = ImageEnhance.Brightness(image)
         image = enhancer_brightness.enhance(2.0)
         return image

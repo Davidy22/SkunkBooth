@@ -1,14 +1,14 @@
-import logging, asyncio
+import logging
 from datetime import datetime
 from functools import partial
 from multiprocessing import Process, Queue
 from time import monotonic
 from typing import List, Tuple
 
-from asciimatics.effects import Print, Cycle, Stars
-from asciimatics.renderers import FigletText
+from asciimatics.effects import Cycle, Print, Stars
 from asciimatics.event import Event, KeyboardEvent
 from asciimatics.exceptions import ResizeScreenError, StopApplication
+from asciimatics.renderers import FigletText
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 
@@ -43,20 +43,16 @@ def global_shortcuts(event: Event) -> None:
         if c in (Screen.KEY_ESCAPE, ord("q"), ctrlQCode, ctrlWCode):
             raise StopApplication("User pressed quit")
 
-def savingVideo(screen, vidBuf) -> None: #Animation for saving video
-    effects = [ #inspired by asciimatics examples/documentation
-        Cycle(
-            screen,
-            FigletText("SAVING", font='big'),
-            screen.height // 2 - 8),
-        Cycle(
-            screen,
-            FigletText("VIDEO!", font='big'),
-            screen.height // 2 + 3),
-        Stars(screen, (screen.width + screen.height) // 2)
+
+def saving_video(screen: Screen, vidBuf: Queue) -> None:
+    """Event handler to initiate video saving"""
+    effects = [
+        Cycle(screen, FigletText("SAVING", font="big"), screen.height // 2 - 8),
+        Cycle(screen, FigletText("VIDEO!", font="big"), screen.height // 2 + 3),
+        Stars(screen, (screen.width + screen.height) // 2),
     ]
     screen.play([Scene(effects, 100)], repeat=False)
-    if vidBuf.empty(): #if the buffer is empty, close the screen
+    if vidBuf.empty():
         screen.close()
 
 
@@ -72,9 +68,7 @@ def main() -> None:
         flag[0] = not flag[0]
         # re-initialize VideoIO for new file name
         if flag[0]:
-            VID_FILE = (
-                f"{settings['PIC_DIR']}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
-            )
+            VID_FILE = f"{settings['PIC_DIR']}/Video-{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}.avi"
             logging.info(f"Recording new video - {VID_FILE}")
             vidBuf.put(VID_FILE)
         else:
@@ -87,7 +81,9 @@ def main() -> None:
     toggleRecord = partial(toggleFlag, record)
     screen = Screen.open(unicode_aware=True)
 
-    logging.info("Screen initialized Height:{} Width:{}".format(screen.height - 8, screen.width))
+    logging.info(
+        "Screen initialized Height:{} Width:{}".format(screen.height - 8, screen.width)
+    )
 
     # last_scene = None
     filters = filterManager()
@@ -108,14 +104,20 @@ def main() -> None:
     (webcam_height, webcam_width, offset) = CamDimensions(screen.height, screen.width)
 
     logging.info(
-        "Webcam Height:{} Webcam Width:{} Offset:{}".format(webcam_height, webcam_width, offset)
+        "Webcam Height:{} Webcam Width:{} Offset:{}".format(
+            webcam_height, webcam_width, offset
+        )
     )
 
     webcam = Webcam(converter, filters, webcam_height, webcam_width)
 
     effects = []
     camera_effect = Print(
-        screen, webcam, y=TOP_MARGIN - 1, x=int(screen.width / 6) + offset, transparent=False
+        screen,
+        webcam,
+        y=TOP_MARGIN - 1,
+        x=int(screen.width / 6) + offset,
+        transparent=False,
     )
     effects.append(MainFrame(screen, webcam, toggleRecord, camera_effect))
 
@@ -138,7 +140,9 @@ def main() -> None:
                 screen = Screen.open(unicode_aware=True)
                 screen.lang_switch = False
                 effects = []
-                (webcam_height, webcam_width, offset) = CamDimensions(screen.height, screen.width)
+                (webcam_height, webcam_width, offset) = CamDimensions(
+                    screen.height, screen.width
+                )
                 webcam.resize(webcam_height, webcam_width)
                 converter.resize(screen.height - 8, screen.width)
                 camera_effect = Print(
@@ -146,16 +150,26 @@ def main() -> None:
                 )
                 record = [True]
                 effects.append(
-                    MainFrame(screen, webcam, partial(toggleFlag, record), camera_effect)
+                    MainFrame(
+                        screen, webcam, partial(toggleFlag, record), camera_effect
+                    )
                 )
                 fNext = FilterFrame(screen, filters, data=fFrame._data)
                 fFrame = fNext
                 scenes = [
                     Scene(effects, -1, name="Main"),
-                    Scene([GalleryFrame(screen, model=image_selection)], -1, name="Gallery"),
+                    Scene(
+                        [GalleryFrame(screen, model=image_selection)],
+                        -1,
+                        name="Gallery",
+                    ),
                     Scene([fFrame], -1, name="Filters"),
                     Scene([SettingsFrame(screen)], -1, name="Settings"),
-                    Scene([PreviewFrame(screen, model=image_selection)], -1, name="Preview"),
+                    Scene(
+                        [PreviewFrame(screen, model=image_selection)],
+                        -1,
+                        name="Preview",
+                    ),
                 ]
 
                 screen.set_scenes(scenes, unhandled_input=global_shortcuts)
@@ -178,7 +192,7 @@ def main() -> None:
             logging.info("Stopping application")
             if not vidBuf.empty():
                 logging.info("Program stopped, saving remaining video")
-                savingVideo(screen, vidBuf) #pretty animation for saving video
+                saving_video(screen, vidBuf)  # pretty animation for saving video
             screen.close()
             vid.join()
             quit(0)

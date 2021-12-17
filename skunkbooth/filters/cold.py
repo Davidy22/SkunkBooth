@@ -1,5 +1,5 @@
 from PIL import Image
-from PIL.ImageOps import grayscale, colorize
+from PIL.ImageOps import colorize, grayscale
 
 
 class filter:
@@ -26,4 +26,4 @@ class filter:
 
     def filter(self, image: Image.Image) -> Image.Image:
         """Process a PIL image and return an image of the same format and dims"""
-        return colorize(grayscale(image), black=(0, 0, 0), white=(225,244,240))
+        return colorize(grayscale(image), black=(0, 0, 0), white=(225, 244, 240))

@@ -28,6 +28,29 @@ class filter:
         self, image: List[List[Tuple[int, int, int, int]]]
     ) -> List[List[Tuple[int, int, int, int]]]:
         """Process an ASCII image and return an image of the same format and dims"""
-        symbols = ["+", "-", "=", "*", "x", "÷", "/", "≠", "≈", ">", "≥", 
-            "<", "≤", "√", "%", "π", "∞", "∑", "φ", "μ", "⊆", "⊇", "⊄"]
+        symbols = [
+            "+",
+            "-",
+            "=",
+            "*",
+            "x",
+            "÷",
+            "/",
+            "≠",
+            "≈",
+            ">",
+            "≥",
+            "<",
+            "≤",
+            "√",
+            "%",
+            "π",
+            "∞",
+            "∑",
+            "φ",
+            "μ",
+            "⊆",
+            "⊇",
+            "⊄",
+        ]
         return [[(random.choice(symbols), j[1], j[2], 0) for j in i] for i in image]

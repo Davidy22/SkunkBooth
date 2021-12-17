@@ -1,4 +1,4 @@
-from PIL import Image, ImageFilter, ImageEnhance
+from PIL import Image, ImageEnhance, ImageFilter
 
 
 class filter:
@@ -25,9 +25,9 @@ class filter:
 
     def filter(self, image: Image.Image) -> Image.Image:
         """Process a PIL image and return an image of the same format and dims"""
-        image = image.convert("L") #Convert to grayscale
-        image = image.filter(ImageFilter.EDGE_ENHANCE_MORE) #enhance the edges
-        image = image.filter(ImageFilter.FIND_EDGES) #outline the edges more clearly
-        enhancer = ImageEnhance.Sharpness(image) #increase sharpness
+        image = image.convert("L")  # Convert to grayscale
+        image = image.filter(ImageFilter.EDGE_ENHANCE_MORE)  # enhance the edges
+        image = image.filter(ImageFilter.FIND_EDGES)  # outline the edges more clearly
+        enhancer = ImageEnhance.Sharpness(image)  # increase sharpness
         image = enhancer.enhance(2.0)
         return image
